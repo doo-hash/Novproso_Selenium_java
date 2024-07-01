@@ -1,0 +1,67 @@
+About us Section - CSR page:
+
+- tested for page title
+- tested for main heading
+- tested list items
+- tested if image exists or not
+- tested dimension for ul list tag
+- added scroll down to the bottom
+- added testing for hover-link-color change
+
+
+********************************************
+Footer:
+- unable to test hover-underline for designed by (link: Novo ProSo)
+***********************************************
+Products pages:
+for dan page: 
+test result for ul tags whether displayed or not: 
+for last tag, test it after scroll as it isn't visible in the window.
+
+for list of elements, it considers commented elements also
+************************************************
+Services Pages:
+- tested for main heading
+- tested for sub heading with styles
+- tested for ul tags
+- added scroll to the bottom
+- used wait upon elements with transition effects
+******************************************
+Main page:
+- tested image slider and printed elements text to console
+- tested startnow link and its styles when its hovered
+- tested navbar links 
+- tested navbar link dropdowns
+- tested all links in dropdown pages
+
+Cookie policy:
+- tested policy link and close button
+- tested its visibility through its location
+
+About us section:
+- tested background image
+- tested styles
+- printed headings text to console
+- highlighted headings
+
+Products section:
+- tested headings along with styles
+- printed them to console
+- tested each product and its elements and links
+
+Services section:
+- tested headings along with styles
+- printed them to console
+- tested each product and its elements and links
+
+Careers section:
+- tested headings along with styles
+- printed them to console
+- tested each career card and its elements and links
+- tested job details model and its content printed to the console
+
+Contact Us:
+- tested headings along with styles
+- printed them to console
+- tested iframe by switching to it
+- tested form by manually inputting data 
