@@ -2,146 +2,227 @@ package test.novoproso;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.net.URL;
 import java.time.Duration;
-import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 class FooterTest {
 
-	WebDriver driver;
-	JavascriptExecutor js;
-	Actions action;
-
-	@BeforeEach
-	void setUp() throws Exception {
-		driver = new ChromeDriver();
-		js = (JavascriptExecutor) driver;
+	static RemoteWebDriver driver;
+	static DesiredCapabilities capabilities = new DesiredCapabilities();
+//	static WebDriver driver;
+	static JavascriptExecutor jsExecutor;
+	static Actions action;
+	static WebDriverWait wait, elementWait;
+	static ChromeOptions chromeoptions;
+	static mouseHoverJS hoverJS;
+	static highLightElement highLightElementClass;
+	
+	@BeforeAll
+	static void setUp() throws Exception {
+		capabilities.setBrowserName("chrome");
+		capabilities.setPlatform(Platform.WIN11);
+		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
+		driver.manage().window().maximize();
+		
+		//Chrome Browser
+//		chromeoptions = new ChromeOptions();
+//		chromeoptions.addArguments("start-maximized");
+//		driver = new ChromeDriver(chromeoptions);
+		
+		//Edge Browser
+//		driver = new EdgeDriver();
+		
+		//Firefox Browser
+//		driver = new FirefoxDriver();
+		
+		//actions
 		action = new Actions(driver);
+		
+		//JavaScriptExecutor
+		jsExecutor = (JavascriptExecutor) driver;
+		
+		hoverJS = new mouseHoverJS();
+		highLightElementClass = new highLightElement();
 	}
 
-	@AfterEach
-	void tearDown() throws Exception {
+	@AfterAll
+	static void tearDown() throws Exception {
 		driver.quit();
 	}
 
 
-	@Disabled
+//	@Disabled
 	@Test
-	void footerTestMethod() throws InterruptedException {
-		driver.manage().window().maximize();
+	void footerSocialLinksTest() throws InterruptedException {
 		driver.get("https://novoproso.com/csr.html");
 
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
 		
+		wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+		
 		//it scrolls to bottom -- method 1
 //		js.executeScript("window.scrollBy(0, 550)", "");
+		jsExecutor.executeScript("window.scrollBy(0,document.body.scrollHeight);");
 
-		List<WebElement> websiteLinks = driver.findElements(By.linkText("Novo ProSo, Inc."));
-		assertEquals(2, websiteLinks.size());
-		assertEquals("index.html", websiteLinks.get(1).getDomAttribute("href"));
+		wait.until(d -> driver.findElement(By.xpath("//div[contains(@class,'footer-logo')]")).isDisplayed());
+		WebElement footerLogoLink = driver.findElement(By.xpath("//div[contains(@class,'footer-logo')]/a"));
+
 		String currentHandle = driver.getWindowHandle(); 
 		assertNotNull(currentHandle);
-		driver.findElement(By.linkText("Novo ProSo, Inc")).click();
 		
-		Thread.sleep(1000);
+		//click footer logo link
+		hoverJS.mouseHoverJScript(footerLogoLink, driver);
+		highLightElementClass.highlightElement(driver, footerLogoLink);
+		footerLogoLink.click();
+
+		//wait until home page opens and check heading
+		wait.until(d -> driver.findElement(By.xpath("//h1")).isDisplayed());
+		highLightElementClass.highlightElement(driver, driver.findElement(By.xpath("//h1")));
+		
+		//check windowhandles and url
 		Object[] windowHandles = driver.getWindowHandles().toArray(); 
 		assertEquals(1, windowHandles.length);
 		assertEquals("https://novoproso.com/index.html", driver.getCurrentUrl());
-		
-		Thread.sleep(1000);
-		driver.navigate().back();
-		assertEquals("https://novoproso.com/csr.html", driver.getCurrentUrl());
+		System.out.println("Navigated to URL : " + driver.getCurrentUrl());
 
-		Thread.sleep(1000);
+		//switch to back
+		driver.navigate().back();
+		
+		//wait until csr page is loaded
+		wait.until(d -> driver.findElement(By.xpath("//h2")).isDisplayed());
+		assertEquals("https://novoproso.com/csr.html", driver.getCurrentUrl());
+		System.out.println("Back to Url : " + driver.getCurrentUrl());
+
+		//hover to twitter link and click it 
 		WebElement twitterElement = driver.findElement(By.className("twitter"));
+		hoverJS.mouseHoverJScript(twitterElement, driver);
+		highLightElementClass.highlightElement(driver, twitterElement);
+		twitterElement.click();
+
+		//go to twitter page
+		Object[] twitterwindowHandles = driver.getWindowHandles().toArray(); 
+		assertNotNull(twitterwindowHandles);
+		driver.switchTo().window((String) twitterwindowHandles[1]);
+		System.out.println("Switched to Url: " + driver.getCurrentUrl());
+		wait.until(d -> driver.getCurrentUrl().equals("https://twitter.com/novoproso"));
+		assertTrue(driver.getCurrentUrl().equals("https://twitter.com/novoproso"));
+		
+		//switch back to csr page
+		driver.switchTo().window((String) twitterwindowHandles[0]);
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.className("facebook"))));
+		System.out.println("Back to Url: " + driver.getCurrentUrl());
 		WebElement facebookElement = driver.findElement(By.className("facebook"));
+
+		//Go to facebook page
+		hoverJS.mouseHoverJScript(facebookElement, driver);
+		highLightElementClass.highlightElement(driver, facebookElement);
+		facebookElement.click();
+		Object[] facebookwindowHandles = driver.getWindowHandles().toArray(); 
+		assertNotNull(facebookwindowHandles);
+		driver.switchTo().window((String) facebookwindowHandles[2]);
+		System.out.println("Switched to Url: " + driver.getCurrentUrl());
+		wait.until(d -> driver.getCurrentUrl().equals("https://www.facebook.com/novoproso"));
+		assertTrue(driver.getCurrentUrl().equals("https://www.facebook.com/novoproso"));
+
+		//switch back to csr page
+		driver.switchTo().window((String) facebookwindowHandles[0]);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.className("linkedin")));
+		System.out.println("Back to Url: " + driver.getCurrentUrl());
 		WebElement linkedinElement = driver.findElement(By.className("linkedin"));
 
-		assertEquals("https://mobile.twitter.com/novoproso", twitterElement.getDomAttribute("href"));
-		assertEquals("https://www.facebook.com/novoproso", facebookElement.getDomAttribute("href"));
-		assertEquals("https://linkedin.com/company/novo-proso-inc", linkedinElement.getDomAttribute("href"));
-		
-		twitterElement.click();
-		String twittterHandle = driver.getWindowHandle();
-		assertNotNull(twittterHandle);
-		Thread.sleep(2000);
-		driver.switchTo().window(currentHandle);
-		Thread.sleep(2000);
-		
-		facebookElement.click();
-		String facebookHandle = driver.getWindowHandle();
-		assertNotNull(facebookHandle);
-		Thread.sleep(3000);
-		driver.switchTo().window((String) currentHandle);
-		Thread.sleep(3000);
-		
+		//Go to linkedIn page
+		hoverJS.mouseHoverJScript(linkedinElement, driver);
+		highLightElementClass.highlightElement(driver, linkedinElement);
 		linkedinElement.click();
-		Thread.sleep(1000);
-		driver.navigate().back();
-		Thread.sleep(1000);
-		driver.switchTo().window(twittterHandle);
+		Object[] linkedinwindowHandles = driver.getWindowHandles().toArray(); 
+		assertNotNull(linkedinwindowHandles);
+		wait.until(d -> driver.getCurrentUrl().equals("https://www.linkedin.com/company/novo-proso-inc"));
+		System.out.println("Switched to Url: " + driver.getCurrentUrl());
+		assertTrue(driver.getCurrentUrl().equals("https://www.linkedin.com/company/novo-proso-inc"));
 
-		System.out.println(twittterHandle);
-		System.out.println(facebookHandle);
-		System.out.println(currentHandle);
-		assertEquals(currentHandle, twittterHandle);
 		Object[] currentWindowHandles = driver.getWindowHandles().toArray(); 
 		assertEquals(3, currentWindowHandles.length);
 
-		Thread.sleep(1000);
+		//Go back to csr page
+		driver.navigate().back();
+		wait.until(d -> driver.findElement(By.xpath("//div[contains(@class,'footer-logo')]")).isDisplayed());
+		System.out.println("Back to Url: " + driver.getCurrentUrl());		
+
 		driver.switchTo().window((String) currentWindowHandles[2]);
-		Thread.sleep(1000);
 		driver.close();
 		assertEquals(2, driver.getWindowHandles().toArray().length);
-		Thread.sleep(1000);
 		
 		driver.switchTo().window((String) driver.getWindowHandles().toArray()[1]);
-		Thread.sleep(1000);
 		driver.close();
 		assertEquals(1, driver.getWindowHandles().toArray().length);
-		Thread.sleep(1000);
 
 		driver.switchTo().window((String) driver.getWindowHandles().toArray()[0]);
 		assertEquals("https://novoproso.com/csr.html", driver.getCurrentUrl());
-		WebElement policyElement = driver.findElement(By.linkText("Disclaimer & PrivacyPolicy"));
-		policyElement.click();
-		Thread.sleep(1000);
+		
+		//click on policy link
+		WebElement policyLink = driver.findElement(By.xpath("//div/p/a[contains(@href,'policy.html')]"));
+		hoverJS.mouseHoverJScript(policyLink, driver);
+		highLightElementClass.highlightElement(driver, policyLink);
+		policyLink.click();
+		wait.until(d -> driver.findElement(By.xpath("//h1")).isDisplayed());		
 		assertEquals("https://novoproso.com/policy.html", driver.getCurrentUrl());
 		assertEquals("Novo ProSo, Inc.", driver.getTitle());
+		System.out.println("navigated to Url: " + driver.getCurrentUrl());
+
 		driver.navigate().back();
-		Thread.sleep(1000);
-		
-		WebElement copyrightElement = driver.findElement(By.id("md"));
-		assertEquals("© 2024 Novo ProSo, Inc.", copyrightElement.getText());
-		websiteLinks.get(1).click();
-		Thread.sleep(1000);
+		wait.until(d -> driver.findElement(By.xpath("//div[contains(@id,'md')]/p/a")).isDisplayed());
+		System.out.println("Back to Url: " + driver.getCurrentUrl());		
+
+		WebElement footerbottomCopyrightLink = driver.findElement(By.xpath("//div[contains(@id,'md')]/p/a"));
+		hoverJS.mouseHoverJScript(footerbottomCopyrightLink, driver);
+		highLightElementClass.highlightElement(driver, footerbottomCopyrightLink);
+		footerbottomCopyrightLink.click();
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		highLightElementClass.highlightElement(driver, driver.findElement(By.xpath("//h1")));
 		assertEquals("https://novoproso.com/index.html", driver.getCurrentUrl());
+		assertEquals("Novo ProSo, Inc.", driver.getTitle());
+		System.out.println("navigated to Url: " + driver.getCurrentUrl());		
+
 		driver.navigate().back();
+		wait.until(d -> driver.findElement(By.xpath("//div[contains(@id,'md')]/p/a")).isDisplayed());
+		System.out.println("Back to Url: " + driver.getCurrentUrl());		
 		
-		Thread.sleep(1000);
-		WebElement designedByElement = driver.findElement(By.className("pull-right"));
+		WebElement designedByElement = driver.findElement(By.xpath("//p[contains(@class,'pull-right')]"));
 		assertEquals("Designed by Novo ProSo", designedByElement.getText());
-		WebElement designedByLinkElement = driver.findElement(By.linkText("Novo ProSo"));
+		WebElement designedByLinkElement = driver.findElement(By.xpath("//p[contains(@class,'pull-right')]/a"));
+		hoverJS.mouseHoverJScript(footerbottomCopyrightLink, driver);
+		highLightElementClass.highlightElement(driver, footerbottomCopyrightLink);
 		designedByLinkElement.click();
-		Thread.sleep(1000);
+		wait.until(d -> driver.findElement(By.xpath("//h1")).isDisplayed());
+		highLightElementClass.highlightElement(driver, driver.findElement(By.xpath("//h1")));		
 		assertEquals("https://novoproso.com/", driver.getCurrentUrl());
+		System.out.println("navigated to Url: " + driver.getCurrentUrl());		
+
 		driver.navigate().back();
-		
-		
+		wait.until(d -> driver.findElement(By.xpath("//div[contains(@id,'md')]/p/a")).isDisplayed());
+		System.out.println("Back to Url: " + driver.getCurrentUrl());				
 		
 	}
-
+	
+	
+//	@Disabled
 	@Test
 	void footerMobileWindowMethod() throws InterruptedException {
 		driver.manage().window().setSize(new Dimension(673,690));
@@ -149,7 +230,7 @@ class FooterTest {
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 		
 		//it scrolls to bottom of the page-- method 2
-		js.executeScript("window.scrollBy(0, document.body.scrollHeight)");
+		jsExecutor.executeScript("window.scrollBy(0, document.body.scrollHeight)");
 
 		
 		//it scrolls down the page till the element is found - method 3
@@ -157,56 +238,147 @@ class FooterTest {
 //		js.executeScript("arguments[0].scrollIntoView()", footerBottomElement);
 		
 		
-		List<WebElement> websiteLinks = driver.findElements(By.linkText("Novo ProSo, Inc."));
-		WebElement footerWebsiteLink = driver.findElement(By.linkText("Novo ProSo, Inc"));
+		wait.until(d -> driver.findElement(By.xpath("//div[contains(@class,'footer-logo')]")).isDisplayed());
+		WebElement footerLogoLink = driver.findElement(By.xpath("//div[contains(@class,'footer-logo')]/a"));
+
+		String currentHandle = driver.getWindowHandle(); 
+		assertNotNull(currentHandle);
+		
+		//click footer logo link
+		hoverJS.mouseHoverJScript(footerLogoLink, driver);
+		highLightElementClass.highlightElement(driver, footerLogoLink);
+		footerLogoLink.click();
+
+		//wait until home page opens and check heading
+		wait.until(d -> driver.findElement(By.xpath("//h1")).isDisplayed());
+		highLightElementClass.highlightElement(driver, driver.findElement(By.xpath("//h1")));
+		
+		//check windowhandles and url
+		Object[] windowHandles = driver.getWindowHandles().toArray(); 
+		assertEquals(1, windowHandles.length);
+		assertEquals("https://novoproso.com/index.html", driver.getCurrentUrl());
+		System.out.println("Navigated to URL : " + driver.getCurrentUrl());
+
+		//switch to back
+		driver.navigate().back();
+		
+		//wait until csr page is loaded
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("twitter")));
+		assertEquals("https://novoproso.com/csr.html", driver.getCurrentUrl());
+		System.out.println("Back to Url : " + driver.getCurrentUrl());
 		WebElement twitterElement = driver.findElement(By.className("twitter"));
+
+		//hover to twitter link and click it 
+		hoverJS.mouseHoverJScript(twitterElement, driver);
+		highLightElementClass.highlightElement(driver, twitterElement);
+		twitterElement.click();
+
+		//go to twitter page
+		Object[] twitterwindowHandles = driver.getWindowHandles().toArray(); 
+		assertNotNull(twitterwindowHandles);
+		driver.switchTo().window((String) twitterwindowHandles[1]);
+		System.out.println("Switched to Url: " + driver.getCurrentUrl());
+		wait.until(d -> driver.getCurrentUrl().equals("https://twitter.com/novoproso"));
+		assertTrue(driver.getCurrentUrl().equals("https://twitter.com/novoproso"));
+		
+		//switch back to csr page
+		driver.switchTo().window((String) twitterwindowHandles[0]);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.className("facebook")));
+		System.out.println("Back to Url: " + driver.getCurrentUrl());
 		WebElement facebookElement = driver.findElement(By.className("facebook"));
+
+		//Go to facebook page
+		hoverJS.mouseHoverJScript(facebookElement, driver);
+		highLightElementClass.highlightElement(driver, facebookElement);
+		facebookElement.click();
+		Object[] facebookwindowHandles = driver.getWindowHandles().toArray(); 
+		assertNotNull(facebookwindowHandles);
+		driver.switchTo().window((String) facebookwindowHandles[2]);
+		System.out.println("Switched to Url: " + driver.getCurrentUrl());
+		wait.until(d -> driver.getCurrentUrl().equals("https://www.facebook.com/novoproso"));
+		assertTrue(driver.getCurrentUrl().equals("https://www.facebook.com/novoproso"));
+
+		//switch back to csr page
+		driver.switchTo().window((String) twitterwindowHandles[0]);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.className("linkedin")));
+		System.out.println("Back to Url: " + driver.getCurrentUrl());
 		WebElement linkedinElement = driver.findElement(By.className("linkedin"));
-		WebElement policyElement = driver.findElement(By.linkText("Disclaimer & PrivacyPolicy"));
-		List<WebElement> spanLinkElements = driver.findElements(By.cssSelector("span"));
-		Thread.sleep(1000);
-		action.moveToElement(footerWebsiteLink).build().perform();
-		Thread.sleep(1000);
-		assertEquals("rgba(252, 208, 93, 1)", footerWebsiteLink.getCssValue("color"));
-		
-		
-		Thread.sleep(1000);
-		action.moveToElement(twitterElement).build().perform();
-		Thread.sleep(1000);
-		assertEquals("rgba(0, 0, 0, 1)", driver.findElement(By.className("twitter")).getCssValue("background-color"));
-		assertEquals("rgba(255, 255, 255, 1)", driver.findElement(By.className("twitter")).getCssValue("color"));
-		
-		Thread.sleep(1000);
-		action.moveToElement(facebookElement).build().perform();
-		Thread.sleep(1000);
-		assertEquals("rgba(59, 89, 153, 1)", facebookElement.getCssValue("background-color"));
-		assertEquals("rgba(255, 255, 255, 1)", driver.findElement(By.className("facebook")).getCssValue("color"));		
-		
-		Thread.sleep(1000);
-		action.moveToElement(linkedinElement).build().perform();
-		Thread.sleep(1000);
-		assertEquals("rgba(3, 109, 192, 1)", linkedinElement.getCssValue("background-color"));
-		assertEquals("rgba(255, 255, 255, 1)", driver.findElement(By.className("linkedin")).getCssValue("color"));
 
-		Thread.sleep(1000);
-		action.moveToElement(policyElement).build().perform();
-		Thread.sleep(500);
-		assertEquals("rgba(252, 208, 93, 1)", policyElement.getCssValue("color"));
-		
-		Thread.sleep(1000);
-		action.moveToElement(websiteLinks.get(1)).build().perform();
-		Thread.sleep(1000);
-		assertEquals("rgba(8, 8, 8, 1)", websiteLinks.get(1).getCssValue("color"));
-		assertEquals("underline solid rgb(8, 8, 8)", websiteLinks.get(1).getCssValue("text-decoration"));
-		
-		Thread.sleep(1000);
-		action.moveToElement(spanLinkElements.get(4)).build().perform();
-		Thread.sleep(1000);
-		assertEquals("rgba(0, 221, 0, 1)", spanLinkElements.get(4).getCssValue("color"));
+		//Go to linkedIn page
+		hoverJS.mouseHoverJScript(linkedinElement, driver);
+		highLightElementClass.highlightElement(driver, linkedinElement);
+		linkedinElement.click();
+		Object[] linkedinwindowHandles = driver.getWindowHandles().toArray(); 
+		assertNotNull(linkedinwindowHandles);
+		wait.until(d -> driver.getCurrentUrl().equals("https://www.linkedin.com/company/novo-proso-inc"));
+		System.out.println("Switched to Url: " + driver.getCurrentUrl());
+		assertTrue(driver.getCurrentUrl().equals("https://www.linkedin.com/company/novo-proso-inc"));
 
-		Thread.sleep(1000);
-		action.moveToElement(driver.findElement(By.linkText("Novo ProSo"))).build().perform();
-//		assertEquals("underline solid rgb(8, 8, 8)", driver.findElement(By.linkText("Novo ProSo")).getCssValue("text-decoration"));
-		Thread.sleep(1000);
+		Object[] currentWindowHandles = driver.getWindowHandles().toArray(); 
+		assertEquals(3, currentWindowHandles.length);
+
+		//Go back to csr page
+		driver.navigate().back();
+		wait.until(d -> driver.findElement(By.xpath("//div[contains(@class,'footer-logo')]")).isDisplayed());
+		System.out.println("Back to Url: " + driver.getCurrentUrl());		
+
+		driver.switchTo().window((String) currentWindowHandles[2]);
+		driver.close();
+		assertEquals(2, driver.getWindowHandles().toArray().length);
+		
+		driver.switchTo().window((String) driver.getWindowHandles().toArray()[1]);
+		driver.close();
+		assertEquals(1, driver.getWindowHandles().toArray().length);
+
+		driver.switchTo().window((String) driver.getWindowHandles().toArray()[0]);
+		assertEquals("https://novoproso.com/csr.html", driver.getCurrentUrl());
+		
+		//click on policy link
+		WebElement policyLink = driver.findElement(By.xpath("//div/p/a[contains(@href,'policy.html')]"));
+		hoverJS.mouseHoverJScript(policyLink, driver);
+		highLightElementClass.highlightElement(driver, policyLink);
+		policyLink.click();
+		wait.until(d -> driver.findElement(By.xpath("//h1")).isDisplayed());		
+		assertEquals("https://novoproso.com/policy.html", driver.getCurrentUrl());
+		assertEquals("Novo ProSo, Inc.", driver.getTitle());
+		System.out.println("navigated to Url: " + driver.getCurrentUrl());
+
+		driver.navigate().back();
+		wait.until(d -> driver.findElement(By.xpath("//div[contains(@id,'md')]/p/a")).isDisplayed());
+		System.out.println("Back to Url: " + driver.getCurrentUrl());		
+
+		WebElement footerbottomCopyrightLink = driver.findElement(By.xpath("//div[contains(@id,'md')]/p/a"));
+		hoverJS.mouseHoverJScript(footerbottomCopyrightLink, driver);
+		highLightElementClass.highlightElement(driver, footerbottomCopyrightLink);
+		footerbottomCopyrightLink.click();
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		highLightElementClass.highlightElement(driver, driver.findElement(By.xpath("//h1")));
+		assertEquals("https://novoproso.com/index.html", driver.getCurrentUrl());
+		assertEquals("Novo ProSo, Inc.", driver.getTitle());
+		System.out.println("navigated to Url: " + driver.getCurrentUrl());		
+
+		driver.navigate().back();
+		wait.until(d -> driver.findElement(By.xpath("//div[contains(@id,'md')]/p/a")).isDisplayed());
+		System.out.println("Back to Url: " + driver.getCurrentUrl());		
+		
+		WebElement designedByElement = driver.findElement(By.xpath("//p[contains(@class,'pull-right')]"));
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", designedByElement);
+		assertEquals("Designed by Novo ProSo", designedByElement.getText());
+		highLightElementClass.highlightElement(driver, designedByElement);
+
+//		WebElement designedByLinkElement = driver.findElement(By.xpath("//p[contains(@class,'pull-right')]/a"));
+//		hoverJS.mouseHoverJScript(designedByLinkElement, driver);
+//		highLightElementClass.highlightElement(driver, designedByLinkElement);
+//		wait.until(ExpectedConditions.elementToBeClickable(designedByLinkElement));
+//		designedByLinkElement.click();
+//		wait.until(ExpectedConditions.urlToBe("https://novoproso.com/"));
+//		wait.until(d -> driver.findElement(By.xpath("//h1")).isDisplayed());
+//		highLightElementClass.highlightElement(driver, driver.findElement(By.xpath("//h1")));		
+//		assertEquals("https://novoproso.com/", driver.getCurrentUrl());
+//		System.out.println("navigated to Url: " + driver.getCurrentUrl());		
+//
+//		driver.navigate().back();
+//		wait.until(d -> driver.findElement(By.xpath("//div[contains(@id,'md')]/p/a")).isDisplayed());
+//		System.out.println("Back to Url: " + driver.getCurrentUrl());				
 	}
 }

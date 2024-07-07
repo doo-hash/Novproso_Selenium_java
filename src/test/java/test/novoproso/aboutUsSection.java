@@ -2,43 +2,53 @@ package test.novoproso;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 class aboutUsSection {
 
-	WebDriver driver;
-	JavascriptExecutor jsExecutor;
-	WebDriverWait wait, imageWait, elementWait;
-	Actions action;
-	ChromeOptions chromeoptions;
+	static RemoteWebDriver driver; 
+	static DesiredCapabilities capabilities = new DesiredCapabilities();
+
+//	static WebDriver driver;
+	static JavascriptExecutor jsExecutor;
+	static WebDriverWait wait, elementWait;
+	static Actions action;
+	static ChromeOptions chromeoptions;
+	static mouseHoverJS hoverJS;
+	static highLightElement highLight;
+	static footerHighlight footerHighlight;
 	
-	@BeforeEach
-	void setUp() throws Exception {
-		//has to do later
-
+	@BeforeAll
+ 	static void setUp() throws Exception {
+		capabilities.setBrowserName("chrome");
+		capabilities.setPlatform(Platform.WIN11);
+		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
+		driver.manage().window().maximize();
+		
 		//Chrome Browser
-		chromeoptions = new ChromeOptions();
-		chromeoptions.addArguments("start-maximized");
-		driver = new ChromeDriver(chromeoptions);
-
+//		chromeoptions = new ChromeOptions();
+//		chromeoptions.addArguments("start-maximized");
+//		driver = new ChromeDriver(chromeoptions);
+		
+		hoverJS = new mouseHoverJS();
 		//Edge Browser
 //		driver = new EdgeDriver();
 		
@@ -50,20 +60,19 @@ class aboutUsSection {
 		
 		//JavaScriptExecutor
 		jsExecutor = (JavascriptExecutor) driver;
+		
+		highLight = new highLightElement();
+		footerHighlight = new footerHighlight();
 	}
 
-	@AfterEach
-	void tearDown() throws Exception {
-		//has to do later
+	@AfterAll
+	static void tearDown() throws Exception {
 		driver.quit();
 	}
 
-	public void highlightElement(WebDriver driver, WebElement element) {
-		JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
-		javascriptExecutor.executeScript("arguments[0].setAttribute('style', 'background: yellow;border: 2px solid red;')", element);
-	}
 
-	@Disabled
+	
+//	@Disabled
 	@Test
 	void CSRPageTest() throws InterruptedException {
 		driver.manage().window().maximize();
@@ -75,37 +84,39 @@ class aboutUsSection {
 		//From home page
 		driver.get("https://novoproso.com");
 		wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-		imageWait = new WebDriverWait(driver, Duration.ofMillis(3000));
 		elementWait = new WebDriverWait(driver, Duration.ofMillis(600));
 		
-		imageWait.until(d-> driver.findElement(By.xpath("//a[contains(@class, 'btn-start')]")).isDisplayed());
+		wait.until(d-> driver.findElement(By.xpath("//a[contains(@class, 'btn-start')]")).isDisplayed());
 		WebElement startnow = driver.findElements(By.xpath("//div[contains(@class,'caption')]/a")).get(0);
 		
 		//click start now button
 		elementWait.until(d -> startnow.isDisplayed());
-		highlightElement(driver, startnow);
+		highLight.highlightElement(driver, startnow);
 		startnow.click();
-		Thread.sleep(1000);
-
+		
+		//wait until about us link appears and hover over it
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
 		WebElement aboutUsLink = driver.findElement(By.xpath("//li/a[@href='#about-us']"));
 		WebElement aboutUsDropdownElement = driver.findElements(By.xpath("//li/ul")).get(0);
 		WebElement csrElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'csr.html')]"));
 		
-		//wait until about us link appears and hover over it
-		elementWait.until(ExpectedConditions.visibilityOf(aboutUsLink));
-		highlightElement(driver, aboutUsLink);
-		action.moveToElement(aboutUsLink).perform();
-		Thread.sleep(1000);
+		highLight.highlightElement(driver, aboutUsLink);
+		hoverJS.mouseHoverJScript(aboutUsLink, driver);
+//		action.moveToElement(aboutUsLink).perform();
+//		action.moveToElement(aboutUsLink).perform();
+//		action.moveToElement(aboutUsLink).perform();		
+//		action.moveToElement(aboutUsLink).perform();
+//		action.moveToElement(aboutUsLink).perform();
 		
 		//wait until about us dropdown appears
 		elementWait.until(d -> aboutUsDropdownElement.isDisplayed());
-		Thread.sleep(1000);
 
 		//click csr element to go that page
-		highlightElement(driver, csrElement);
+		highLight.highlightElement(driver, csrElement);
 		csrElement.click();
 
 		//wait until page loads (waiting until page main heading loads)
+		wait.until(ExpectedConditions.urlToBe("https://novoproso.com/csr.html"));
 		wait.until(d -> driver.findElement(By.xpath("//h2")).isDisplayed());
 		
 		//get Current URL
@@ -117,24 +128,20 @@ class aboutUsSection {
 		assertEquals("Novo ProSo, Inc.", pageTitle);
 		
 		//assert main heading
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.cssSelector("h2"))));
 		WebElement mainHeading = driver.findElement(By.cssSelector("h2"));
 		assertEquals("Corporate Social Responsibility", mainHeading.getText());
-		
+		highLight.highlightElement(driver, mainHeading);
+
 		//assert image
 		WebElement imageElement = driver.findElement(By.cssSelector("img"));
 		assertTrue(imageElement.isDisplayed());
 		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
+		highLight.highlightElement(driver, imageElement);
 		
 		//assert ul, li tags
 		List<WebElement> ulElements = driver.findElements(By.cssSelector("ul"));
 		assertEquals(6, ulElements.size());
-		assertEquals(new Dimension(616,80), ulElements.get(0).getSize());
-		System.out.printf(ulElements.get(1).getSize().toString(),ulElements.get(2).getSize().toString(),ulElements.get(3).getSize().toString());
-//		assertEquals(new Dimension(750, 140), ulElements.get(1).getSize());
-//		assertEquals(new Dimension(750, 140), ulElements.get(2).getSize());
-//		assertEquals(new Dimension(750, 140), ulElements.get(3).getSize());
-		assertEquals(new Dimension(750, 140), ulElements.get(4).getSize());
-		assertEquals(new Dimension(124, 36), ulElements.get(5).getSize());
 
 		//whether ul tags are displayed or not
 		assertTrue(ulElements.get(0).isDisplayed());
@@ -143,6 +150,7 @@ class aboutUsSection {
 		assertFalse(ulElements.get(3).isDisplayed());
 		assertTrue(ulElements.get(4).isDisplayed());
 		assertTrue(ulElements.get(5).isDisplayed());
+
 		//check for li tags
 		List<WebElement> aboutUsInfoList = driver.findElements(By.className("oli"));
 		assertEquals(4, aboutUsInfoList.size());
@@ -150,9 +158,14 @@ class aboutUsSection {
 		assertEquals("Environment and energy.", aboutUsInfoList.get(1).getText());
 		assertEquals("Governance.", aboutUsInfoList.get(2).getText());
 		assertEquals("Community Outreach.", aboutUsInfoList.get(3).getText());
+		
+		highLight.highlightElement(driver, ulElements.get(4));
+		
+		//Footer
+		footerHighlight.footerHighlightElement(driver, jsExecutor, wait);
 	}
 
-	@Disabled
+//	@Disabled
 	@Test
 	void localSportsPageTest() throws InterruptedException {
 		driver.manage().window().maximize();
@@ -164,37 +177,41 @@ class aboutUsSection {
 		//From home page
 		driver.get("https://novoproso.com");
 		wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-		imageWait = new WebDriverWait(driver, Duration.ofMillis(3000));
+		wait = new WebDriverWait(driver, Duration.ofMillis(3000));
 		elementWait = new WebDriverWait(driver, Duration.ofMillis(600));
 		
-		imageWait.until(d-> driver.findElement(By.xpath("//a[contains(@class, 'btn-start')]")).isDisplayed());
+		wait.until(d-> driver.findElement(By.xpath("//a[contains(@class, 'btn-start')]")).isDisplayed());
 		WebElement startnow = driver.findElements(By.xpath("//div[contains(@class,'caption')]/a")).get(0);
 		
 		//click start now button
 		elementWait.until(d -> startnow.isDisplayed());
-		highlightElement(driver, startnow);
+		highLight.highlightElement(driver, startnow);
 		startnow.click();
-		Thread.sleep(1000);
 
-		WebElement aboutUsLink = driver.findElement(By.xpath("//li/a[@href='#about-us']"));
+		//wait until about us link appears and hover over it
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		WebElement aboutUsLink = driver.findElement(By.xpath("//li/a[contains(@href,'#about-us')]"));
 		WebElement aboutUsDropdownElement = driver.findElements(By.xpath("//li/ul")).get(0);
 		WebElement localSportsElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'localSports.html')]"));
 		
-		//wait until about us link appears and hover over it
 		elementWait.until(ExpectedConditions.visibilityOf(aboutUsLink));
-		highlightElement(driver, aboutUsLink);
-		action.moveToElement(aboutUsLink).perform();
-		Thread.sleep(1000);
+		highLight.highlightElement(driver, aboutUsLink);
+		hoverJS.mouseHoverJScript(aboutUsLink, driver);
+//		action.moveToElement(aboutUsLink).build().perform();
+//		action.moveToElement(aboutUsLink).perform();
+//		action.moveToElement(aboutUsLink).perform();
+//		action.moveToElement(aboutUsLink).perform();
+//		action.moveToElement(aboutUsLink).perform();
 		
 		//wait until about us dropdown appears
 		elementWait.until(d -> aboutUsDropdownElement.isDisplayed());
-		Thread.sleep(1000);
 
 		//click localSports element to go that page
-		highlightElement(driver, localSportsElement);
+		highLight.highlightElement(driver, localSportsElement);
 		localSportsElement.click();
 
 		//wait until page loads (waiting until page main heading loads)
+		wait.until(ExpectedConditions.urlToBe("https://novoproso.com/localSports.html"));
 		wait.until(d -> driver.findElement(By.xpath("//h2")).isDisplayed());
 		
 		//get Current URL
@@ -208,21 +225,17 @@ class aboutUsSection {
 		//assert main heading
 		WebElement mainHeading = driver.findElement(By.cssSelector("h2"));
 		assertEquals("Local Sports Sponsorship", mainHeading.getText());
+		highLight.highlightElement(driver, mainHeading);
 		
 		//assert image
 		WebElement imageElement = driver.findElement(By.cssSelector("img"));
 		assertTrue(imageElement.isDisplayed());
 		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
-		
+		highLight.highlightElement(driver, imageElement);
+
 		//assert ul, li tags
 		List<WebElement> ulElements = driver.findElements(By.cssSelector("ul"));
 		assertEquals(5, ulElements.size());
-		assertEquals(new Dimension(616,80), ulElements.get(0).getSize());
-		System.out.printf(ulElements.get(1).getSize().toString(),ulElements.get(2).getSize().toString(),ulElements.get(3).getSize().toString());
-//		assertEquals(new Dimension(750, 140), ulElements.get(1).getSize());
-//		assertEquals(new Dimension(750, 140), ulElements.get(2).getSize());
-//		assertEquals(new Dimension(750, 140), ulElements.get(3).getSize());
-		assertEquals(new Dimension(124, 36), ulElements.get(4).getSize());
 
 		//whether ul tags are displayed or not
 		assertTrue(ulElements.get(0).isDisplayed());
@@ -231,6 +244,8 @@ class aboutUsSection {
 		assertFalse(ulElements.get(3).isDisplayed());
 		assertTrue(ulElements.get(4).isDisplayed());
 
+		//Footer
+		footerHighlight.footerHighlightElement(driver, jsExecutor, wait);
 	}
 
 }

@@ -65,3 +65,6 @@ Contact Us:
 - printed them to console
 - tested iframe by switching to it
 - tested form by manually inputting data 
+- tested map 
+
+map URL: https://www.google.com/maps?ll=38.774302,-93.71891&z=16&t=m&hl=en&gl=US&mapclient=embed&cid=5132590464493258661
