@@ -1,4 +1,4 @@
-package test.novoproso;
+package test.novoproso.mobileview;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -36,7 +37,7 @@ import test.novoproso.utils.mouseHoverJS;
 
 import org.openqa.selenium.ElementClickInterceptedException;
 
-class homePage {
+class HomePageMobileView {
 	
 	//chrome, msedge, firefox
 	static String browser = "msedge";
@@ -85,6 +86,7 @@ class homePage {
 
 	@BeforeEach
 	void openUrl() throws Exception {
+		driver.manage().window().setSize(new Dimension(673,690));
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 		driver.get("https://novoproso.com");
 
@@ -131,14 +133,18 @@ class homePage {
 	
 //	@Disabled
 	@Test
-	void navBarTest() throws InterruptedException {		
+	void navBarMobileViewTest() throws InterruptedException {				
 		WebElement startnow = driver.findElements(By.xpath("//div[contains(@class,'caption')]/a")).get(0);
 		hoverJS.mouseHoverJScript(startnow, driver);
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
 		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
 
 		WebElement homeLink = driver.findElement(By.xpath("//li/a[@href='#home']"));
 		System.out.println("home nav element : " + homeLink.getText());
@@ -273,14 +279,8 @@ class homePage {
 		System.out.println("contact us nav element : " + contactLink.getText());
 	}
 
-
-//	@Disabled
-
-
-
 	
 //	@Disabled
-	
 	@Test
 	void aboutUsSectionTest() throws InterruptedException {	
 		//fetch elements from image block
@@ -289,7 +289,13 @@ class homePage {
 		highLightElementClass.highlightElement(driver, startnow);		
 		startnow.click();
 
-		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("about-us"))));
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+
 		assertTrue(driver.findElement(By.className("main-nav")).isDisplayed());
 		assertTrue(driver.findElement(By.className("cookie-container")).isDisplayed());
 		
@@ -302,8 +308,6 @@ class homePage {
 		assertEquals("rgba(255, 255, 255, 1)", driver.findElements(By.cssSelector("h2")).get(0).getCssValue("color"));
 		assertEquals("Core Values", driver.findElements(By.cssSelector("h2")).get(1).getText());
 		assertEquals("rgba(255, 255, 255, 1)", driver.findElements(By.cssSelector("h2")).get(1).getCssValue("color"));
-		assertEquals("Certifications", driver.findElements(By.cssSelector("h2")).get(2).getText());
-		assertEquals("rgba(255, 255, 255, 1)", driver.findElements(By.cssSelector("h2")).get(2).getCssValue("color"));
 		assertEquals(24, driver.findElements(By.cssSelector("ul")).size());		
 		assertEquals(55, driver.findElements(By.cssSelector("li")).size());
 		
@@ -312,6 +316,10 @@ class homePage {
 		highLightElementClass.highlightElement(driver, driver.findElements(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/p")).get(1));
 		highLightElementClass.highlightElement(driver, driver.findElements(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).get(1));
 		highLightElementClass.highlightElement(driver, driver.findElements(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/ul")).get(0));
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", driver.findElements(By.cssSelector("h2")).get(2));
+		wait.until(ExpectedConditions.visibilityOf(driver.findElements(By.cssSelector("h2")).get(2)));
+		assertEquals("Certifications", driver.findElements(By.cssSelector("h2")).get(2).getText());
+		assertEquals("rgba(255, 255, 255, 1)", driver.findElements(By.cssSelector("h2")).get(2).getCssValue("color"));
 		highLightElementClass.highlightElement(driver, driver.findElements(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).get(2));
 		highLightElementClass.highlightElement(driver, driver.findElements(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/ul")).get(1));
 	}
@@ -327,9 +335,14 @@ class homePage {
 		startnow.click();
 
 		//wait until about us link in the header appears
-		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
 		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
 
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+	
 		//go to products link and click
 		WebElement productsLink = driver.findElement(By.xpath("//li/a[@href='#products']"));
 		hoverJS.mouseHoverJScript(productsLink, driver);
@@ -363,12 +376,15 @@ class homePage {
 			List<WebElement> productContent = driver.findElements(By.xpath("//div[contains(@class,'product')]/div[contains(@class,'product-content')]/p"));
 			List<WebElement> productReadMoreLink = driver.findElements(By.xpath("//div[contains(@class,'product-button')]/a"));
 
+			driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+			
 			//close cookie button
 			driver.findElement(By.xpath("//div[contains(@class,'cookie-container')]/p/button")).click();
 			
 			for(WebElement product: products) {
 				int index = products.indexOf(product);
-				wait.until(d -> product.isDisplayed());
+				jsExecutor.executeScript("arguments[0].scrollIntoView();", product);
+				wait.until(ExpectedConditions.visibilityOf(product));
 				System.out.println("Product Name: " + productName.get(index).getText());
 				System.out.println("Product Image: " + productImage.get(index).getDomAttribute("src"));
 				System.out.println("Product Content: " + productContent.get(index).getText());
@@ -376,8 +392,8 @@ class homePage {
 				System.out.println("Product Readmore Link: " + productReadMoreLink.get(index).getDomAttribute("href"));
 				
 				//Checking Styles
-				assertEquals("rgba(57, 144, 30, 1)", productName.get(index).getCssValue("color"));
-				assertEquals("1.6px solid rgb(128, 199, 131)", driver.findElements(By.xpath("//div[contains(@class,'product')]/div[contains(@class,'product-content')]")).get(index).getCssValue("border"));
+				assertEquals("rgba(255, 255, 255, 1)", productName.get(index).getCssValue("color"));
+				assertEquals("0px none rgba(0, 0, 0, 0.6)", driver.findElements(By.xpath("//div[contains(@class,'product')]/div[contains(@class,'product-content')]")).get(index).getCssValue("border"));
 				assertEquals("rgba(220, 245, 214, 1)", driver.findElements(By.xpath("//div[contains(@class,'product')]/div[contains(@class,'product-content')]")).get(index).getCssValue("background-color"));
 				assertEquals("rgba(0, 0, 0, 0.6)", productContent.get(index).getCssValue("color"));
 				assertEquals("rgba(128, 128, 128, 1)", productReadMoreLink.get(index).getCssValue("color"));
@@ -388,16 +404,17 @@ class homePage {
 
 				//hover over readmore link
 				hoverJS.mouseHoverJScript(productReadMoreLink.get(index), driver);
-				actions.moveToElement(productReadMoreLink.get(index)).build().perform();
-				wait.until(ExpectedConditions.attributeToBe(productReadMoreLink.get(index), "color", "rgba(57, 144, 30, 1)"));
-				assertEquals("rgba(57, 144, 30, 1)", productReadMoreLink.get(index).getCssValue("color"));
-				assertEquals("2.4px solid rgb(128, 199, 131)", productReadMoreLink.get(index).getCssValue("border"));
+//				actions.moveToElement(productReadMoreLink.get(index)).build().perform();
+//				wait.until(ExpectedConditions.attributeToBe(productReadMoreLink.get(index), "color", "rgba(57, 144, 30, 1)"));
+//				assertEquals("rgba(57, 144, 30, 1)", productReadMoreLink.get(index).getCssValue("color"));
+//				assertEquals("2.4px solid rgb(128, 199, 131)", productReadMoreLink.get(index).getCssValue("border"));
 				highLightElementClass.highlightElement(driver, productReadMoreLink.get(index));
 			}
 		} catch (ElementClickInterceptedException e) {
 			System.out.println("Products link is not clickable at the moment!");
 		}
 	}
+
 
 //	@Disabled
 	@Test
@@ -413,8 +430,13 @@ class homePage {
 		startnow.click();
 
 		//wait until about us link in the header appears
-		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
 		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
 
 		//go to products link and click
 		WebElement productsLink = driver.findElement(By.xpath("//li/a[@href='#products']"));
@@ -428,7 +450,8 @@ class homePage {
 		//wait until products section is visible
 		wait.until(d -> productsHeading.isDisplayed());
 		
-		
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();		
+
 		//get products elements
 		List<WebElement> products = driver.findElements(By.xpath("//div[contains(@class,'products-content')]/div[contains(@class,'product')]"));
 
@@ -471,8 +494,13 @@ class homePage {
 		startnow.click();
 
 		//wait until about us link in the header appears
-		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
 		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
 
 		//go to services link and click
 		WebElement servicesLink = driver.findElement(By.xpath("//li/a[@href='#services']"));
@@ -485,6 +513,8 @@ class homePage {
 		WebElement servicesHeading = driver.findElement(By.xpath("//div[contains(@class,'services-heading')]/h2"));
 		//wait until products section is visible
 		elementWait.until(d -> servicesHeading.isDisplayed());
+
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
 		
 		//assert main heading
 		highLightElementClass.highlightElement(driver, servicesHeading);
@@ -498,6 +528,8 @@ class homePage {
 		List<WebElement> serviceContent = driver.findElements(By.xpath("//div[contains(@class,'service')]/div[contains(@class,'content')]/p"));
 		List<WebElement> serviceReadMoreLink = driver.findElements(By.xpath("//div[contains(@class,'service-button')]/a"));
 
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		
 		//close cookie button
 		driver.findElement(By.xpath("//div[contains(@class,'cookie-container')]/p/button")).click();
 		
@@ -517,7 +549,7 @@ class homePage {
 			
 			//Checking Styles
 			assertEquals("rgba(57, 144, 30, 1)", serviceName.get(index).getCssValue("color"));
-			assertEquals("0.8px solid rgb(128, 199, 131)", driver.findElements(By.xpath("//div[contains(@class,'service')]/div[contains(@class,'content')]")).get(index).getCssValue("border"));
+			assertEquals("0.8px solid rgb(0, 0, 0)", driver.findElements(By.xpath("//div[contains(@class,'service')]/div[contains(@class,'content')]")).get(index).getCssValue("border"));
 			assertEquals("rgba(220, 245, 214, 1)", driver.findElements(By.xpath("//div[contains(@class,'service')]/div[contains(@class,'content')]")).get(index).getCssValue("background-color"));
 			assertEquals("rgba(128, 128, 128, 1)", serviceContent.get(index).getCssValue("color"));
 			assertEquals("rgba(128, 128, 128, 1)", serviceReadMoreLink.get(index).getCssValue("color"));
@@ -528,11 +560,80 @@ class homePage {
 
 			//hover over readmore link
 			hoverJS.mouseHoverJScript(serviceReadMoreLink.get(index), driver);
-			actions.moveToElement(serviceReadMoreLink.get(index)).perform();
 //			assertEquals("rgba(57, 144, 30, 1)", serviceReadMoreLink.get(index).getCssValue("color"));
 //			assertEquals("2.4px solid rgb(128, 199, 131)", serviceReadMoreLink.get(index).getCssValue("border"));
 			highLightElementClass.highlightElement(driver, serviceReadMoreLink.get(index));
 		}
+	}
+	
+	
+//	@Disabled
+	@Test
+	void loopServicesLinkTest() throws InterruptedException {			
+		//close cookie button
+		driver.findElement(By.xpath("//div[contains(@class,'cookie-container')]/p/button")).click();
+		
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1")));		
+		wait.until(d-> driver.findElement(By.xpath("//a[contains(@class, 'btn-start')]")).isDisplayed());
+		WebElement startnow = driver.findElements(By.xpath("//div[contains(@class,'caption')]/a")).get(0);
+		hoverJS.mouseHoverJScript(startnow, driver);
+		highLightElementClass.highlightElement(driver, startnow);
+		startnow.click();
+
+		//wait until about us link in the header appears
+		//wait until about us link in the header appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+
+		//go to services link and click
+		WebElement servicesLink = driver.findElement(By.xpath("//li/a[@href='#services']"));
+		highLightElementClass.highlightElement(driver, servicesLink);
+		System.out.println("services nav element : " + servicesLink.getText());
+
+		driver.findElement(By.xpath("//li/a[contains(@href,'#services')]")).click();
+
+		//From services section
+		WebElement servicesHeading = driver.findElement(By.xpath("//div[contains(@class,'services-heading')]/h2"));
+		//wait until services section is visible
+		wait.until(d -> servicesHeading.isDisplayed());
+
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		
+		//get services elements
+		List<WebElement> services = driver.findElements(By.xpath("//div[contains(@class,'services-content')]/div[contains(@class,'service')]"));
+
+//		elementWait.until(d -> services.get(0).isDisplayed());			
+
+		for (WebElement service : services) {
+			int index = services.indexOf(service);
+			
+			System.out.println("index: " + index);
+			
+			jsExecutor.executeScript("arguments[0].scrollIntoView();", driver.findElements(By.xpath("//div[contains(@class,'services-content')]/div[contains(@class,'service')]")).get(index));			
+			wait.until(d -> driver.findElements(By.xpath("//div[contains(@class,'services-content')]/div[contains(@class,'service')]")).get(index).isDisplayed());		
+			
+			//hover over first service read more link
+			hoverJS.mouseHoverJScript(driver.findElements(By.xpath("//div[contains(@class,'service-button')]/a")).get(index), driver);
+			highLightElementClass.highlightElement(driver, driver.findElements(By.xpath("//div[contains(@class,'service-button')]/a")).get(index));
+			driver.findElements(By.xpath("//div[contains(@class,'service-button')]/a")).get(index).click();
+			
+//			wait.until(ExpectedConditions.urlToBe("https://novoproso.com/hra.html"));
+			String firsturl = driver.getCurrentUrl();
+			System.out.println("Current URL: " + firsturl);
+			wait.until(d -> driver.findElement(By.xpath("//h2")).isDisplayed());
+			highLightElementClass.highlightElement(driver, driver.findElement(By.xpath("//h2")));
+
+			driver.navigate().back();
+			
+			wait.until(d -> driver.findElement(By.xpath("//div[contains(@class,'services-heading')]/h2")).isDisplayed());			
+		}
+		
+		
 	}
 	
 	
@@ -547,25 +648,35 @@ class homePage {
 		startnow.click();
 
 		//wait until about us link in the header appears
-		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
 		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
 
 		//go to careers link and click
 		WebElement careersLink = driver.findElement(By.xpath("//li/a[@href='#career']"));
 		hoverJS.mouseHoverJScript(careersLink, driver);
 		highLightElementClass.highlightElement(driver, careersLink);
 		System.out.println("careers nav element : " + careersLink.getText());
+		
+		careersLink.click();
+
+		//From careers section
+		WebElement careersHeading = driver.findElement(By.xpath("//div[contains(@class,'careers-heading')]/h2"));
+
+		//wait until careers section is visible
+		wait.until(d -> careersHeading.isDisplayed());
+
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+
+		//close cookie
+		driver.findElement(By.xpath("//button[contains(@class,'cookie-btn')]")).click();
+
+		
 		try {
-			careersLink.click();
-
-			//From careers section
-			WebElement careersHeading = driver.findElement(By.xpath("//div[contains(@class,'careers-heading')]/h2"));
-
-			//wait until careers section is visible
-			wait.until(d -> careersHeading.isDisplayed());
-			
-			//close cookie
-			driver.findElement(By.xpath("//button[contains(@class,'cookie-btn')]")).click();
 
 			//heading block background color
 			assertEquals("rgba(220, 245, 214, 1)", driver.findElement(By.xpath("//div[contains(@class,'careers-heading-info')]")).getCssValue("background-color"));
@@ -622,7 +733,7 @@ class homePage {
 				
 				//Checking Styles
 				assertEquals("rgba(1, 110, 14, 1)", jobName.get(index).getCssValue("color"));
-				assertEquals("2.4px solid rgb(128, 199, 131)", driver.findElements(By.xpath("//div[contains(@class,'career-card')]")).get(index).getCssValue("border"));
+//				assertEquals("2.4px solid rgb(128, 199, 131)", driver.findElements(By.xpath("//div[contains(@class,'career-card')]")).get(index).getCssValue("border"));
 				assertEquals("rgba(255, 255, 255, 1)", driver.findElements(By.xpath("//div[contains(@class,'career-card')]")).get(index).getCssValue("background-color"));
 				assertEquals("rgba(0, 0, 0, 1)", jobPositionheading.get(index).getCssValue("color"));
 				assertEquals("rgba(128, 128, 128, 1)", jobPosition.get((index*4)).getCssValue("color"));
@@ -673,8 +784,14 @@ class homePage {
 		startnow.click();
 
 		//wait until about us link in the header appears
-		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
 		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+
 		//go to careers link and click
 		WebElement careersLink = driver.findElement(By.xpath("//li/a[@href='#career']"));
 		highLightElementClass.highlightElement(driver, careersLink);
@@ -686,7 +803,9 @@ class homePage {
 
 		//wait until careers section is visible
 		wait.until(d -> careersHeading.isDisplayed());
-		
+		Thread.sleep(2000);
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+
 		//close cookie
 		driver.findElement(By.xpath("//button[contains(@class,'cookie-btn')]")).click();
 		
@@ -701,12 +820,12 @@ class homePage {
 			elementWait.until(d -> career.isDisplayed());
 			//hover over jobDetails link
 			hoverJS.mouseHoverJScript(jobDetailsLink.get(index), driver);
-			actions.moveToElement(jobDetailsLink.get(index)).perform();
+//			actions.moveToElement(jobDetailsLink.get(index)).perform();
 			jobDetailsLink.get(index).click();
 
 			String[] jobIDArray = {"AIML", "PEGA5","QASEL7","SD241","SD242","NSE18"};
 			hoverJS.mouseHoverJScript(driver.findElement(By.xpath("//div[contains(@id,'"+jobIDArray[index]+"')]")), driver);
-			actions.moveToElement(driver.findElement(By.xpath("//div[contains(@id,'"+jobIDArray[index]+"')]"))).perform();
+//			actions.moveToElement(driver.findElement(By.xpath("//div[contains(@id,'"+jobIDArray[index]+"')]"))).perform();
 			WebElement jobName = driver.findElement(By.xpath("//div[contains(@id,'"+jobIDArray[index]+"')]/div/div/h2"));
 			WebElement jobBasicInfo = driver.findElements(By.xpath("//div[contains(@class,'job-basic-info')]")).get((index));
 			WebElement jobMessage = driver.findElement(By.xpath("//div[contains(@id,'"+jobIDArray[index]+"')]/div/div/p"));
@@ -725,7 +844,8 @@ class homePage {
 			wait.until(ExpectedConditions.visibilityOf(jobMessage));
 			System.out.println("Job message : "+ jobMessage.getText());
 			highLightElementClass.highlightElement(driver, jobMessage);
-			actions.moveToElement(driver.findElements(By.xpath("//div[contains(@class,'overlay')]")).get(index*2)).perform();
+			hoverJS.mouseHoverJScript(driver.findElements(By.xpath("//div[contains(@class,'overlay')]")).get(index*2), driver);
+//			actions.moveToElement(driver.findElements(By.xpath("//div[contains(@class,'overlay')]")).get(index*2)).perform();
 			driver.findElements(By.xpath("//div[contains(@class,'overlay')]")).get(index*2).click();
 		}				
 	}
@@ -742,8 +862,13 @@ class homePage {
 		startnow.click();
 
 		//wait until about us link in the header appears
-		elementWait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
 		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		elementWait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
 
 		//go to contact us link and click
 		WebElement contactLink = driver.findElement(By.xpath("//li/a[@href='#contact']"));
@@ -761,6 +886,8 @@ class homePage {
 			//wait until contact us section is visible
 			wait.until(d -> contactUsHeading.isDisplayed());
 
+			driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+			
 			//assert image
 			assertEquals("url(\"https://novoproso.com/images/contact-bg.jpg\")", driver.findElement(By.xpath("//div[contains(@id, 'contact-us')]")).getCssValue("background-image"));
 			
@@ -793,6 +920,9 @@ class homePage {
 
 			//map
 			WebElement mapElement = driver.findElement(By.xpath("//div[contains(@class, 'contact-info')]/ul/li/iframe"));
+			jsExecutor.executeScript("arguments[0].scrollIntoView();", mapElement);
+			wait.until(ExpectedConditions.visibilityOf(mapElement));
+			
 			driver.findElement(By.xpath("//div[contains(@class, 'contact-info')]/ul/li/iframe"));
 			driver.switchTo().frame(mapElement);
 

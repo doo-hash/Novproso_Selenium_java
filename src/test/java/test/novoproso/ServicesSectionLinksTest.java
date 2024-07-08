@@ -16,46 +16,45 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import test.novoproso.utils.BrowserSetUp;
+import test.novoproso.utils.highLightElement;
+import test.novoproso.utils.mouseHoverJS;
+
 
 class ServicesSectionLinksTest {
 
-	static RemoteWebDriver driver; 
-	static DesiredCapabilities capabilities = new DesiredCapabilities();
+	//chrome, msedge, firefox
+	static String browser = "msedge";
+//	static RemoteWebDriver driver; 
+//	static DesiredCapabilities capabilities = new DesiredCapabilities();
 
-//	static WebDriver driver;
+	static WebDriver driver;
 	static JavascriptExecutor jsExecutor;
 	static WebDriverWait wait, elementWait;
 //	static RemoteWebDriver driver;//it includes JavascriptExecutor, TakesScreenshot functionality
 	static Actions actions;
-	static ChromeOptions chromeoptions;
 	static mouseHoverJS hoverJS;
 	static highLightElement highLightElementClass;
-
+	static BrowserSetUp browserSetUp = new BrowserSetUp();
 	
 	@BeforeAll
 	static void setUp() throws Exception {
-		capabilities.setBrowserName("chrome");
-		capabilities.setPlatform(Platform.WIN11);
-		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
-		driver.manage().window().maximize();
+		driver = browserSetUp.getBrowserSetUp(browser);
 		
-//		chromeoptions = new ChromeOptions();
-//		chromeoptions.addArguments("start-maximized");
-//		driver = new ChromeDriver(chromeoptions);
-
-//		driver = new RemoteWebDriver(new URL("http://localhost:4444"), chromeoptions);
-		
-//		driver = new FirefoxDriver();
-
-//		EdgeOptions edgeOptions = new EdgeOptions();		
-//		edgeOptions.addArguments("start-maximized");
-//		driver = new EdgeDriver(edgeOptions);
+//		capabilities.setBrowserName("chrome");
+//		capabilities.setPlatform(Platform.WIN11);
+//		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
+//		driver.manage().window().maximize();
 		
 		jsExecutor = (JavascriptExecutor) driver;//casting webdriver to JavascriptExecutor
 		actions = new Actions(driver);

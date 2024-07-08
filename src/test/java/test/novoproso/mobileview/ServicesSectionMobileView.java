@@ -1,4 +1,4 @@
-package test.novoproso;
+package test.novoproso.mobileview;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
@@ -31,7 +32,7 @@ import test.novoproso.utils.footerHighlight;
 import test.novoproso.utils.highLightElement;
 import test.novoproso.utils.mouseHoverJS;
 
-class servicesSection {
+class ServicesSectionMobileView {
 	
 	//chrome, msedge, firefox
 	static String browser = "msedge";
@@ -50,6 +51,7 @@ class servicesSection {
 	@BeforeAll
 	static void setUp() throws Exception {
 		driver = browserSetUp.getBrowserSetUp(browser);
+		driver.manage().window().setSize(new Dimension(673,690));
 
 //		capabilities.setBrowserName("chrome");
 //		capabilities.setPlatform(Platform.WIN11);
@@ -94,7 +96,14 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		wait.until(d -> driver.findElement(By.xpath("//li/a[contains(@href,'#about-us')]")));
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		
 		WebElement servicesLink = driver.findElement(By.xpath("//li/a[@href='#services']"));
 		WebElement servicesDropdownElement = driver.findElements(By.xpath("//li/ul")).get(2);
 		WebElement ideaElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'idea.html')]"));
@@ -128,9 +137,17 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, mainHeading);
 		assertEquals("Your Own Idea", mainHeading.getText());
 
+		//assert image
+		WebElement imageElement = driver.findElement(By.cssSelector("img"));
+		highLightElementClass.highlightElement(driver, imageElement);
+		assertTrue(imageElement.isDisplayed());
+		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
+		
 		//sub heading
 		//did not include commented tag
 		WebElement subHeading = driver.findElement(By.cssSelector("h4"));
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", subHeading);
+		wait.until(ExpectedConditions.visibilityOf(subHeading));
 		assertEquals("Bring Your Vision to Life!", subHeading.getText());
 		assertEquals("rgba(8, 117, 3, 0.8)", subHeading.getCssValue("color"));
 		assertEquals("1.5px", subHeading.getCssValue("letter-spacing"));
@@ -141,24 +158,20 @@ class servicesSection {
 		//hr
 		assertTrue(driver.findElement(By.cssSelector("hr")).isDisplayed());
 
-		//assert image
-		WebElement imageElement = driver.findElement(By.cssSelector("img"));
-		highLightElementClass.highlightElement(driver, imageElement);
-		assertTrue(imageElement.isDisplayed());
-		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
-		
 		//assert ul, li tags
 		List<WebElement> ulElements = driver.findElements(By.cssSelector("ul"));
 		List<WebElement> content = driver.findElements(By.xpath("//div[contains(@class,'service-info')]/p"));
 		assertEquals(6, ulElements.size());
 
 		//whether ul tags are displayed or not
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
+		
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", ulElements.get(4));
+		wait.until(ExpectedConditions.visibilityOf(ulElements.get(4)));
 		assertTrue(ulElements.get(4).isDisplayed());
-
 		highLightElementClass.highlightElement(driver, content.get(0));
 		highLightElementClass.highlightElement(driver, content.get(1));
 		highLightElementClass.highlightElement(driver, ulElements.get(4));
@@ -189,7 +202,14 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		wait.until(d -> driver.findElement(By.xpath("//li/a[contains(@href,'#about-us')]")));
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+
 		WebElement servicesLink = driver.findElement(By.xpath("//li/a[@href='#services']"));
 		WebElement servicesDropdownElement = driver.findElements(By.xpath("//li/ul")).get(2);
 		WebElement sdElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'sd.html')]"));
@@ -198,10 +218,6 @@ class servicesSection {
 		elementWait.until(ExpectedConditions.visibilityOf(servicesLink));
 		highLightElementClass.highlightElement(driver, servicesLink);
 		hoverJS.mouseHoverJScript(servicesLink, driver);
-
-//		action.moveToElement(servicesLink).perform();
-//		action.moveToElement(servicesLink).perform();
-//		action.moveToElement(servicesLink).perform();
 		
 		//wait until Services dropdown appears
 		elementWait.until(d -> servicesDropdownElement.isDisplayed());
@@ -227,7 +243,15 @@ class servicesSection {
 		assertEquals("Software Development", mainHeading.getText());
 		highLightElementClass.highlightElement(driver, mainHeading);
 		
+		//assert image
+		WebElement imageElement = driver.findElement(By.cssSelector("img"));
+		highLightElementClass.highlightElement(driver, imageElement);
+		assertTrue(imageElement.isDisplayed());
+		assertEquals("images/sd.png", imageElement.getDomAttribute("src"));
+		
 		//sub heading
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", subHeading);
+		wait.until(ExpectedConditions.visibilityOf(subHeading));
 		assertEquals("We design custom software to boost your business using the latest tech and agile methods!", subHeading.getText());
 		assertEquals("rgba(8, 117, 3, 0.8)", subHeading.getCssValue("color"));
 		assertEquals("1.5px", subHeading.getCssValue("letter-spacing"));
@@ -238,23 +262,19 @@ class servicesSection {
 		//hr
 		assertTrue(driver.findElement(By.cssSelector("hr")).isDisplayed());
 
-		//assert image
-		WebElement imageElement = driver.findElement(By.cssSelector("img"));
-		highLightElementClass.highlightElement(driver, imageElement);
-		assertTrue(imageElement.isDisplayed());
-		assertEquals("images/sd.png", imageElement.getDomAttribute("src"));
-		
 		//assert ul, li tags
 		List<WebElement> ulElements = driver.findElements(By.cssSelector("ul"));
 		List<WebElement> content = driver.findElements(By.xpath("//div[contains(@class,'service-info')]/p"));
 		assertEquals(5, ulElements.size());
 
 		//whether ul tags are displayed or not
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
 		
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", content.get(0));
+		wait.until(ExpectedConditions.visibilityOf(content.get(0)));
 		highLightElementClass.highlightElement(driver, content.get(0));
 		highLightElementClass.highlightElement(driver, content.get(1));
 		highLightElementClass.highlightElement(driver, content.get(2));
@@ -284,7 +304,14 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		wait.until(d -> driver.findElement(By.xpath("//li/a[contains(@href,'#about-us')]")));
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		
 		WebElement servicesLink = driver.findElement(By.xpath("//li/a[@href='#services']"));
 		WebElement servicesDropdownElement = driver.findElements(By.xpath("//li/ul")).get(2);
 		WebElement itstaffElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'itstaff.html')]"));
@@ -293,9 +320,7 @@ class servicesSection {
 		elementWait.until(ExpectedConditions.visibilityOf(servicesLink));
 		highLightElementClass.highlightElement(driver, servicesLink);
 		hoverJS.mouseHoverJScript(servicesLink, driver);
-		
-//		action.moveToElement(servicesLink).perform();
-		
+				
 		//wait until Services dropdown appears
 		elementWait.until(d -> servicesDropdownElement.isDisplayed());
 
@@ -320,7 +345,15 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, mainHeading);
 		assertEquals("IT Staffing", mainHeading.getText());
 
+		//assert image
+		WebElement imageElement = driver.findElement(By.cssSelector("img"));
+		highLightElementClass.highlightElement(driver, imageElement);
+		assertTrue(imageElement.isDisplayed());
+		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
+		
 		//sub heading
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", subHeading);
+		wait.until(ExpectedConditions.visibilityOf(subHeading));
 		assertEquals("Unlock your IT project potential with our "+ "tailored staffing "+ "solutions—let's build your winning team!", subHeading.getText());
 		assertEquals("rgba(8, 117, 3, 0.8)", subHeading.getCssValue("color"));
 		assertEquals("1.5px", subHeading.getCssValue("letter-spacing"));
@@ -331,25 +364,21 @@ class servicesSection {
 		//hr
 		assertTrue(driver.findElement(By.cssSelector("hr")).isDisplayed());
 
-		//assert image
-		WebElement imageElement = driver.findElement(By.cssSelector("img"));
-		highLightElementClass.highlightElement(driver, imageElement);
-		assertTrue(imageElement.isDisplayed());
-		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
-		
 		//assert ul, li tags
 		List<WebElement> ulElements = driver.findElements(By.cssSelector("ul"));
 		List<WebElement> content = driver.findElements(By.xpath("//div[contains(@class,'service-info')]/p"));
 		assertEquals(5, ulElements.size());
 
 		//whether ul tags are displayed or not
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
 		
 		assertTrue(driver.findElement(By.linkText("Novo ProSo")).isDisplayed());
 		
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", content.get(0));
+		wait.until(ExpectedConditions.visibilityOf(content.get(0)));
 		highLightElementClass.highlightElement(driver, content.get(0));
 		highLightElementClass.highlightElement(driver, content.get(1));
 		highLightElementClass.highlightElement(driver, content.get(2));
@@ -380,7 +409,14 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		wait.until(d -> driver.findElement(By.xpath("//li/a[contains(@href,'#about-us')]")));
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		
 		WebElement servicesLink = driver.findElement(By.xpath("//li/a[@href='#services']"));
 		WebElement servicesDropdownElement = driver.findElements(By.xpath("//li/ul")).get(2);
 		WebElement cloudElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'cloud.html')]"));
@@ -389,9 +425,7 @@ class servicesSection {
 		elementWait.until(ExpectedConditions.visibilityOf(servicesLink));
 		highLightElementClass.highlightElement(driver, servicesLink);
 		hoverJS.mouseHoverJScript(servicesLink, driver);
-		
-//		action.moveToElement(servicesLink).perform();
-		
+				
 		//wait until Services dropdown appears
 		elementWait.until(d -> servicesDropdownElement.isDisplayed());
 
@@ -416,7 +450,15 @@ class servicesSection {
 		assertEquals("Cloud Computing", mainHeading.getText());
 		highLightElementClass.highlightElement(driver, mainHeading);
 		
+		//assert image
+		WebElement imageElement = driver.findElement(By.cssSelector("img"));
+		highLightElementClass.highlightElement(driver, imageElement);
+		assertTrue(imageElement.isDisplayed());
+		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
+		
 		//sub heading
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", subHeading);
+		wait.until(ExpectedConditions.visibilityOf(subHeading));
 		assertEquals("Take your business to new heights with our cloud computing services!", subHeading.getText());
 		assertEquals("rgba(8, 117, 3, 0.8)", subHeading.getCssValue("color"));
 		assertEquals("1.5px", subHeading.getCssValue("letter-spacing"));
@@ -427,24 +469,20 @@ class servicesSection {
 		//hr
 		assertTrue(driver.findElement(By.cssSelector("hr")).isDisplayed());
 
-		//assert image
-		WebElement imageElement = driver.findElement(By.cssSelector("img"));
-		highLightElementClass.highlightElement(driver, imageElement);
-		assertTrue(imageElement.isDisplayed());
-		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
-		
 		//assert ul, li tags
 		List<WebElement> ulElements = driver.findElements(By.cssSelector("ul"));
 		List<WebElement> content = driver.findElements(By.xpath("//div[contains(@class,'service-info')]/p"));
 		assertEquals(6, ulElements.size());
 
 		//whether ul tags are displayed or not
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
+
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", ulElements.get(4));
+		wait.until(ExpectedConditions.visibilityOf(ulElements.get(4)));
 		assertTrue(ulElements.get(4).isDisplayed());
-		
 		highLightElementClass.highlightElement(driver, content.get(0));
 		highLightElementClass.highlightElement(driver, ulElements.get(4));
 		highLightElementClass.highlightElement(driver, content.get(1));
@@ -474,7 +512,14 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		wait.until(d -> driver.findElement(By.xpath("//li/a[contains(@href,'#about-us')]")));
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		
 		WebElement servicesLink = driver.findElement(By.xpath("//li/a[@href='#services']"));
 		WebElement servicesDropdownElement = driver.findElements(By.xpath("//li/ul")).get(2);
 		WebElement AIMlElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'ai.html')]"));
@@ -483,8 +528,6 @@ class servicesSection {
 		elementWait.until(ExpectedConditions.visibilityOf(servicesLink));
 		highLightElementClass.highlightElement(driver, servicesLink);
 		hoverJS.mouseHoverJScript(servicesLink, driver);
-
-//		action.moveToElement(servicesLink).perform();
 		
 		//wait until Services dropdown appears
 		elementWait.until(d -> servicesDropdownElement.isDisplayed());
@@ -510,7 +553,15 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, mainHeading);
 		assertEquals("Artificial Intelligence/ Machine Learning", mainHeading.getText());
 
+		//assert image
+		WebElement imageElement = driver.findElement(By.cssSelector("img"));
+		highLightElementClass.highlightElement(driver, imageElement);
+		assertTrue(imageElement.isDisplayed());
+		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
+		
 		//sub heading
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", subHeading);
+		wait.until(ExpectedConditions.visibilityOf(subHeading));
 		assertEquals("Unlock the power of Artificial Intelligence and Machine Learning to transform your business!", subHeading.getText());
 		assertEquals("rgba(8, 117, 3, 0.8)", subHeading.getCssValue("color"));
 		assertEquals("1.5px", subHeading.getCssValue("letter-spacing"));
@@ -521,24 +572,20 @@ class servicesSection {
 		//hr
 		assertTrue(driver.findElement(By.cssSelector("hr")).isDisplayed());
 
-		//assert image
-		WebElement imageElement = driver.findElement(By.cssSelector("img"));
-		highLightElementClass.highlightElement(driver, imageElement);
-		assertTrue(imageElement.isDisplayed());
-		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
-		
 		//assert ul, li tags
 		List<WebElement> ulElements = driver.findElements(By.cssSelector("ul"));
 		List<WebElement> content = driver.findElements(By.xpath("//div[contains(@class,'service-info')]/p"));
 		assertEquals(6, ulElements.size());
 
 		//whether ul tags are displayed or not
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
-		assertTrue(ulElements.get(4).isDisplayed());
 
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", ulElements.get(4));
+		wait.until(ExpectedConditions.visibilityOf(ulElements.get(4)));
+		assertTrue(ulElements.get(4).isDisplayed());
 		highLightElementClass.highlightElement(driver, content.get(0));
 		highLightElementClass.highlightElement(driver, ulElements.get(4));
 		highLightElementClass.highlightElement(driver, content.get(1));
@@ -568,7 +615,14 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		wait.until(d -> driver.findElement(By.xpath("//li/a[contains(@href,'#about-us')]")));
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		
 		WebElement servicesLink = driver.findElement(By.xpath("//li/a[@href='#services']"));
 		WebElement servicesDropdownElement = driver.findElements(By.xpath("//li/ul")).get(2);
 		WebElement bigDataElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'bigData.html')]"));
@@ -578,7 +632,6 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, servicesLink);
 
 		hoverJS.mouseHoverJScript(servicesLink, driver);
-//		action.moveToElement(servicesLink).perform();
 		
 		//wait until Services dropdown appears
 		elementWait.until(d -> servicesDropdownElement.isDisplayed());
@@ -604,7 +657,15 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, mainHeading.getLast());
 		assertEquals("BigData Analytics", mainHeading.getLast().getText());
 
+		//assert image
+		WebElement imageElement = driver.findElement(By.cssSelector("img"));
+		highLightElementClass.highlightElement(driver, imageElement);
+		assertTrue(imageElement.isDisplayed());
+		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
+		
 		//sub heading
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", subHeading);
+		wait.until(ExpectedConditions.visibilityOf(subHeading));
 		assertEquals("Unlock the hidden insights in your data and drive business success with our Big Data Analytics services!", subHeading.getText());
 		assertEquals("rgba(8, 117, 3, 0.8)", subHeading.getCssValue("color"));
 		assertEquals("1.5px", subHeading.getCssValue("letter-spacing"));
@@ -614,13 +675,6 @@ class servicesSection {
 		
 		//hr
 		assertTrue(driver.findElement(By.cssSelector("hr")).isDisplayed());
-
-		//assert image
-		WebElement imageElement = driver.findElement(By.cssSelector("img"));
-		highLightElementClass.highlightElement(driver, imageElement);
-		assertTrue(imageElement.isDisplayed());
-		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
-		
 		
 		//assert ul, li tags
 		List<WebElement> ulElements = driver.findElements(By.cssSelector("ul"));
@@ -628,13 +682,15 @@ class servicesSection {
 		assertEquals(7, ulElements.size());
 
 		//whether ul tags are displayed or not
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
-		assertTrue(ulElements.get(4).isDisplayed());
-		assertTrue(ulElements.get(5).isDisplayed());
 		
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", ulElements.get(4));
+		wait.until(ExpectedConditions.visibilityOf(ulElements.get(4)));		
+		assertTrue(ulElements.get(4).isDisplayed());
+		assertTrue(ulElements.get(5).isDisplayed());		
 		highLightElementClass.highlightElement(driver, content.get(0));
 		highLightElementClass.highlightElement(driver, ulElements.get(4));
 		highLightElementClass.highlightElement(driver, content.get(1));
@@ -667,7 +723,14 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		wait.until(d -> driver.findElement(By.xpath("//li/a[contains(@href,'#about-us')]")));
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+
 		WebElement servicesLink = driver.findElement(By.xpath("//li/a[@href='#services']"));
 		WebElement servicesDropdownElement = driver.findElements(By.xpath("//li/ul")).get(2);
 		WebElement hraElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'hra.html')]"));
@@ -703,7 +766,15 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, mainHeading);
 		assertEquals("Healthcare Research & Analysis", mainHeading.getText());
 
+		//assert image
+		WebElement imageElement = driver.findElement(By.cssSelector("img"));
+		highLightElementClass.highlightElement(driver, imageElement);
+		assertTrue(imageElement.isDisplayed());
+		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
+
 		//sub heading
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", subHeading);
+		wait.until(ExpectedConditions.visibilityOf(subHeading));
 		assertEquals("Transform healthcare outcomes with data-driven insights!", subHeading.getText());
 		assertEquals("rgba(8, 117, 3, 0.8)", subHeading.getCssValue("color"));
 		assertEquals("1.5px", subHeading.getCssValue("letter-spacing"));
@@ -713,12 +784,6 @@ class servicesSection {
 		
 		//hr
 		assertTrue(driver.findElement(By.cssSelector("hr")).isDisplayed());
-
-		//assert image
-		WebElement imageElement = driver.findElement(By.cssSelector("img"));
-		highLightElementClass.highlightElement(driver, imageElement);
-		assertTrue(imageElement.isDisplayed());
-		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
 		
 		//assert ul, li tags
 		List<WebElement> ulElements = driver.findElements(By.cssSelector("ul"));
@@ -726,13 +791,15 @@ class servicesSection {
 		assertEquals(7, ulElements.size());
 
 		//whether ul tags are displayed or not
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
+
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", ulElements.get(4));
+		wait.until(ExpectedConditions.visibilityOf(ulElements.get(4)));
 		assertTrue(ulElements.get(4).isDisplayed());
 		assertTrue(ulElements.get(5).isDisplayed());
-
 		highLightElementClass.highlightElement(driver, content.get(0));
 		highLightElementClass.highlightElement(driver, ulElements.get(4));
 		highLightElementClass.highlightElement(driver, content.get(1));
@@ -765,7 +832,14 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		wait.until(d -> driver.findElement(By.xpath("//li/a[contains(@href,'#about-us')]")));
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		
 		WebElement servicesLink = driver.findElement(By.xpath("//li/a[@href='#services']"));
 		WebElement servicesDropdownElement = driver.findElements(By.xpath("//li/ul")).get(2);
 		WebElement itpmElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'itpm.html')]"));
@@ -774,8 +848,6 @@ class servicesSection {
 		elementWait.until(ExpectedConditions.visibilityOf(servicesLink));
 		highLightElementClass.highlightElement(driver, servicesLink);
 		hoverJS.mouseHoverJScript(servicesLink, driver);
-
-//		action.moveToElement(servicesLink).perform();
 		
 		//wait until Services dropdown appears
 		elementWait.until(d -> servicesDropdownElement.isDisplayed());
@@ -798,11 +870,18 @@ class servicesSection {
 		//assert main heading
 		WebElement mainHeading = driver.findElement(By.cssSelector("h2"));
 		WebElement subHeading = driver.findElement(By.cssSelector("h4"));
-		wait.until(d->subHeading.isDisplayed());
 		highLightElementClass.highlightElement(driver, mainHeading);
 		assertEquals("IT Project/Program Management", mainHeading.getText());
 
+		//assert image
+		WebElement imageElement = driver.findElement(By.cssSelector("img"));
+		highLightElementClass.highlightElement(driver, imageElement);
+		assertTrue(imageElement.isDisplayed());
+		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
+		
 		//sub heading
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", subHeading);
+		wait.until(ExpectedConditions.visibilityOf(subHeading));
 		assertEquals("Deliver your IT projects on time, within budget, and with exceptional quality!", subHeading.getText());
 		assertEquals("rgba(8, 117, 3, 0.8)", subHeading.getCssValue("color"));
 		assertEquals("1.5px", subHeading.getCssValue("letter-spacing"));
@@ -812,12 +891,6 @@ class servicesSection {
 		
 		//hr
 		assertTrue(driver.findElement(By.cssSelector("hr")).isDisplayed());
-
-		//assert image
-		WebElement imageElement = driver.findElement(By.cssSelector("img"));
-		highLightElementClass.highlightElement(driver, imageElement);
-		assertTrue(imageElement.isDisplayed());
-		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
 		
 		//assert ul, li tags
 		List<WebElement> ulElements = driver.findElements(By.cssSelector("ul"));
@@ -825,12 +898,14 @@ class servicesSection {
 		assertEquals(6, ulElements.size());
 
 		//whether ul tags are displayed or not
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
-		assertTrue(ulElements.get(4).isDisplayed());
 		
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", ulElements.get(4));
+		wait.until(ExpectedConditions.visibilityOf(ulElements.get(4)));
+		assertTrue(ulElements.get(4).isDisplayed());
 		highLightElementClass.highlightElement(driver, content.get(0));
 		highLightElementClass.highlightElement(driver, ulElements.get(4));
 		highLightElementClass.highlightElement(driver, content.get(1));
@@ -861,7 +936,14 @@ class servicesSection {
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		wait.until(d -> driver.findElement(By.xpath("//li/a[contains(@href,'#about-us')]")));
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+
 		WebElement servicesLink = driver.findElement(By.xpath("//li/a[@href='#services']"));
 		WebElement servicesDropdownElement = driver.findElements(By.xpath("//li/ul")).get(2);
 		WebElement networkElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'network.html')]"));
@@ -894,11 +976,18 @@ class servicesSection {
 		//assert main heading
 		WebElement mainHeading = driver.findElement(By.cssSelector("h2"));
 		WebElement subHeading = driver.findElement(By.cssSelector("h4"));
-		wait.until(d->subHeading.isDisplayed());
 		highLightElementClass.highlightElement(driver, mainHeading);
 		assertEquals("IT Network & Security", mainHeading.getText());
 
+		//assert image
+		WebElement imageElement = driver.findElement(By.cssSelector("img"));
+		highLightElementClass.highlightElement(driver, imageElement);
+		assertTrue(imageElement.isDisplayed());
+		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
+		
 		//sub heading
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", subHeading);
+		wait.until(ExpectedConditions.visibilityOf(subHeading));
 		assertEquals("Protect your business from cyber threats and optimize your network performance with our comprehensive IT network and security services!", subHeading.getText());
 		assertEquals("rgba(8, 117, 3, 0.8)", subHeading.getCssValue("color"));
 		assertEquals("1.5px", subHeading.getCssValue("letter-spacing"));
@@ -909,24 +998,20 @@ class servicesSection {
 		//hr
 		assertTrue(driver.findElement(By.cssSelector("hr")).isDisplayed());
 
-		//assert image
-		WebElement imageElement = driver.findElement(By.cssSelector("img"));
-		highLightElementClass.highlightElement(driver, imageElement);
-		assertTrue(imageElement.isDisplayed());
-		assertEquals("images/idea.png", imageElement.getDomAttribute("src"));
-		
 		//assert ul, li tags
 		List<WebElement> ulElements = driver.findElements(By.cssSelector("ul"));
 		List<WebElement> content = driver.findElements(By.xpath("//div[contains(@class,'service-info')]/p"));
 		assertEquals(6, ulElements.size());
 
 		//whether ul tags are displayed or not
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
-		assertTrue(ulElements.get(4).isDisplayed());
 
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", ulElements.get(4));
+		wait.until(ExpectedConditions.visibilityOf(ulElements.get(4)));
+		assertTrue(ulElements.get(4).isDisplayed());
 		highLightElementClass.highlightElement(driver, content.get(0));
 		highLightElementClass.highlightElement(driver, ulElements.get(4));
 		highLightElementClass.highlightElement(driver, content.get(1));

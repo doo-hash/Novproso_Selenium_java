@@ -1,8 +1,9 @@
-package test.novoproso;
+package test.novoproso.mobileview;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 
@@ -10,28 +11,21 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import junit.framework.TestCase;
 import test.novoproso.utils.BrowserSetUp;
 import test.novoproso.utils.footerHighlight;
 import test.novoproso.utils.highLightElement;
 import test.novoproso.utils.mouseHoverJS;
 
-class aboutUsSection {
+class AboutUsSectionMobileView {
 
 	//chrome, msedge, firefox
 	static String browser ="msedge";
@@ -48,10 +42,11 @@ class aboutUsSection {
 	static BrowserSetUp browserSetUpConfig = new BrowserSetUp();
 	
 	@BeforeAll
- 	static void setUp() throws Exception {
+	static void beforesetUp() {
 		driver = browserSetUpConfig.getBrowserSetUp(browser);
+		driver.manage().window().setSize(new Dimension(673,690));
 
-		//		capabilities.setBrowserName("chrome");
+//		capabilities.setBrowserName("chrome");
 //		capabilities.setPlatform(Platform.WIN11);
 //		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
 //		driver.manage().window().maximize();
@@ -68,7 +63,7 @@ class aboutUsSection {
 	}
 
 	@AfterAll
-	static void tearDown() throws Exception {
+	static void aftertearDown() throws Exception {
 		driver.quit();
 	}
 
@@ -95,19 +90,20 @@ class aboutUsSection {
 		highLight.highlightElement(driver, startnow);
 		startnow.click();
 		
-		//wait until about us link appears and hover over it
-		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		
 		WebElement aboutUsLink = driver.findElement(By.xpath("//li/a[@href='#about-us']"));
 		WebElement aboutUsDropdownElement = driver.findElements(By.xpath("//li/ul")).get(0);
 		WebElement csrElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'csr.html')]"));
 		
 		highLight.highlightElement(driver, aboutUsLink);
 		hoverJS.mouseHoverJScript(aboutUsLink, driver);
-//		action.moveToElement(aboutUsLink).perform();
-//		action.moveToElement(aboutUsLink).perform();
-//		action.moveToElement(aboutUsLink).perform();		
-//		action.moveToElement(aboutUsLink).perform();
-//		action.moveToElement(aboutUsLink).perform();
 		
 		//wait until about us dropdown appears
 		elementWait.until(d -> aboutUsDropdownElement.isDisplayed());
@@ -145,13 +141,14 @@ class aboutUsSection {
 		assertEquals(6, ulElements.size());
 
 		//whether ul tags are displayed or not
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
+		
+		jsExecutor.executeScript("arguments[0].scrollIntoView();",ulElements.get(4));
+		wait.until(ExpectedConditions.visibilityOf(ulElements.get(4)));		
 		assertTrue(ulElements.get(4).isDisplayed());
-		assertTrue(ulElements.get(5).isDisplayed());
-
 		//check for li tags
 		List<WebElement> aboutUsInfoList = driver.findElements(By.className("oli"));
 		assertEquals(4, aboutUsInfoList.size());
@@ -159,7 +156,6 @@ class aboutUsSection {
 		assertEquals("Environment and energy.", aboutUsInfoList.get(1).getText());
 		assertEquals("Governance.", aboutUsInfoList.get(2).getText());
 		assertEquals("Community Outreach.", aboutUsInfoList.get(3).getText());
-		
 		highLight.highlightElement(driver, ulElements.get(4));
 		
 		//Footer
@@ -188,8 +184,14 @@ class aboutUsSection {
 		highLight.highlightElement(driver, startnow);
 		startnow.click();
 
-		//wait until about us link appears and hover over it
-		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+
 		WebElement aboutUsLink = driver.findElement(By.xpath("//li/a[contains(@href,'#about-us')]"));
 		WebElement aboutUsDropdownElement = driver.findElements(By.xpath("//li/ul")).get(0);
 		WebElement localSportsElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'localSports.html')]"));
@@ -197,11 +199,6 @@ class aboutUsSection {
 		elementWait.until(ExpectedConditions.visibilityOf(aboutUsLink));
 		highLight.highlightElement(driver, aboutUsLink);
 		hoverJS.mouseHoverJScript(aboutUsLink, driver);
-//		action.moveToElement(aboutUsLink).build().perform();
-//		action.moveToElement(aboutUsLink).perform();
-//		action.moveToElement(aboutUsLink).perform();
-//		action.moveToElement(aboutUsLink).perform();
-//		action.moveToElement(aboutUsLink).perform();
 		
 		//wait until about us dropdown appears
 		elementWait.until(d -> aboutUsDropdownElement.isDisplayed());
@@ -238,14 +235,16 @@ class aboutUsSection {
 		assertEquals(5, ulElements.size());
 
 		//whether ul tags are displayed or not
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
+
+		jsExecutor.executeScript("arguments[0].scrollIntoView();",ulElements.get(4));
+		wait.until(ExpectedConditions.visibilityOf(ulElements.get(4)));			
 		assertTrue(ulElements.get(4).isDisplayed());
 
 		//Footer
 		footerHighlight.footerHighlightElement(driver, jsExecutor, wait);
 	}
-
 }

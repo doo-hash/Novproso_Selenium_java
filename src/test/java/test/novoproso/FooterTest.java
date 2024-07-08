@@ -16,41 +16,42 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import test.novoproso.utils.BrowserSetUp;
+import test.novoproso.utils.highLightElement;
+import test.novoproso.utils.mouseHoverJS;
+
 class FooterTest {
 
-	static RemoteWebDriver driver;
-	static DesiredCapabilities capabilities = new DesiredCapabilities();
-//	static WebDriver driver;
+	//chrome, msedge, firefox
+	static String browser = "msedge";
+//	static RemoteWebDriver driver;
+//	static DesiredCapabilities capabilities = new DesiredCapabilities();
+	static WebDriver driver;
 	static JavascriptExecutor jsExecutor;
 	static Actions action;
 	static WebDriverWait wait, elementWait;
-	static ChromeOptions chromeoptions;
 	static mouseHoverJS hoverJS;
 	static highLightElement highLightElementClass;
+	static BrowserSetUp browserSetUp = new BrowserSetUp();
 	
 	@BeforeAll
 	static void setUp() throws Exception {
-		capabilities.setBrowserName("chrome");
-		capabilities.setPlatform(Platform.WIN11);
-		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
-		driver.manage().window().maximize();
+		driver = browserSetUp.getBrowserSetUp(browser);
 		
-		//Chrome Browser
-//		chromeoptions = new ChromeOptions();
-//		chromeoptions.addArguments("start-maximized");
-//		driver = new ChromeDriver(chromeoptions);
-		
-		//Edge Browser
-//		driver = new EdgeDriver();
-		
-		//Firefox Browser
-//		driver = new FirefoxDriver();
+//		capabilities.setBrowserName("chrome");
+//		capabilities.setPlatform(Platform.WIN11);
+//		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
+//		driver.manage().window().maximize();
 		
 		//actions
 		action = new Actions(driver);

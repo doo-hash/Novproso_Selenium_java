@@ -1,4 +1,4 @@
-package test.novoproso;
+package test.novoproso.utils;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;

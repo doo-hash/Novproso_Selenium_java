@@ -1,4 +1,4 @@
-package test.novoproso;
+package test.novoproso.mobileview;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
@@ -31,7 +32,7 @@ import test.novoproso.utils.footerHighlight;
 import test.novoproso.utils.highLightElement;
 import test.novoproso.utils.mouseHoverJS;
 
-class productSection {
+class ProductSectionMobileView {
 	
 	//chrome, msedge, firefox
 	static String browser = "msedge";
@@ -50,7 +51,8 @@ class productSection {
 	@BeforeAll
 	static void setUp() throws Exception {
 		driver = browserSetUp.getBrowserSetUp(browser);
-		
+		driver.manage().window().setSize(new Dimension(673,690));
+
 //		capabilities.setBrowserName("chrome");
 //		capabilities.setPlatform(Platform.WIN11);
 //		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
@@ -93,20 +95,21 @@ class productSection {
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		//wait until about us link appears and hover over it
-		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
 		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#home']")).isDisplayed());
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		
 		WebElement productsLink = driver.findElement(By.xpath("//li/a[@href='#products']"));
 		WebElement productsDropdownElement = driver.findElements(By.xpath("//li/ul")).get(1);
 		WebElement danElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'DAN.html')]"));
 		
 		highLightElementClass.highlightElement(driver, productsLink);
 		hoverJS.mouseHoverJScript(productsLink, driver);
-//		action.moveToElement(productsLink).perform();
-//		action.moveToElement(productsLink).perform();
-//		action.moveToElement(productsLink).perform();
-//		action.moveToElement(productsLink).perform();
-//		action.moveToElement(productsLink).perform();
 		
 		//wait until about us dropdown appears
 		elementWait.until(d -> productsDropdownElement.isDisplayed());
@@ -134,6 +137,8 @@ class productSection {
 		
 		//sub heading
 		WebElement subHeading = driver.findElement(By.cssSelector("h4"));
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", subHeading);
+		wait.until(ExpectedConditions.visibilityOf(subHeading));
 		assertEquals("Unlocking Hidden Insights!", subHeading.getText());
 		assertEquals("rgba(8, 117, 3, 0.8)", subHeading.getCssValue("color"));
 		assertEquals("1.5px", subHeading.getCssValue("letter-spacing"));
@@ -156,17 +161,18 @@ class productSection {
 		
 		//whether ul tags are displayed or not
 		assertEquals(7, ulElements.size());
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
+		
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", ulElements.get(4));
+		wait.until(ExpectedConditions.visibilityOf(ulElements.get(4)));
 		assertTrue(ulElements.get(4).isDisplayed());
-		assertTrue(ulElements.get(5).isDisplayed());
-
-		//check for li tags
 		highLightElementClass.highlightElement(driver, content.get(0));		
 		highLightElementClass.highlightElement(driver, ulElements.get(4));
 		highLightElementClass.highlightElement(driver, content.get(1));		
+		assertTrue(ulElements.get(5).isDisplayed());
 		highLightElementClass.highlightElement(driver, ulElements.get(5));
 		highLightElementClass.highlightElement(driver, content.get(2));		
 
@@ -196,9 +202,15 @@ class productSection {
 		highLightElementClass.highlightElement(driver, startnow);
 		startnow.click();
 
-		//wait until about us link appears and hover over it
-		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+		//wait until about us section appears
+		wait.until(d -> driver.findElement(By.xpath("//h1/a")).isDisplayed());
 		wait.until(d -> driver.findElement(By.xpath("//section[contains(@id,'about-us')]//div[contains(@class,'about-info')]/h2")).isDisplayed());
+
+		//click on nav element to open nav menu
+		driver.findElement(By.xpath("//button[contains(@class,'navbar-toggle')]")).click();
+		wait.until(d -> driver.findElement(By.xpath("//li/a[@href='#about-us']")).isDisplayed());
+
+		
 		WebElement productsLink = driver.findElement(By.xpath("//li/a[@href='#products']"));
 		WebElement productsDropdownElement = driver.findElements(By.xpath("//li/ul")).get(1);
 		WebElement bdIngensionElement = driver.findElement(By.xpath("//li/ul/li/a[contains(@href, 'BDIngension.html')]"));
@@ -207,11 +219,6 @@ class productSection {
 		elementWait.until(ExpectedConditions.visibilityOf(productsLink));
 		highLightElementClass.highlightElement(driver, productsLink);
 		hoverJS.mouseHoverJScript(productsLink, driver);
-//		action.moveToElement(productsLink).perform();
-//		action.moveToElement(productsLink).perform();
-//		action.moveToElement(productsLink).perform();
-//		action.moveToElement(productsLink).perform();
-//		action.moveToElement(productsLink).perform();
 		
 		//wait until about us dropdown appears
 		elementWait.until(d -> productsDropdownElement.isDisplayed());
@@ -240,6 +247,8 @@ class productSection {
 		assertEquals("BigData-Ingension", mainHeading.getLast().getText());
 
 		//sub heading
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", subHeading);
+		wait.until(ExpectedConditions.visibilityOf(subHeading));
 		assertEquals("Unleashing the Power of Raw Data!", subHeading.getText());
 		assertEquals("rgba(8, 117, 3, 0.8)", subHeading.getCssValue("color"));
 		assertEquals("1.5px", subHeading.getCssValue("letter-spacing"));
@@ -262,16 +271,18 @@ class productSection {
 
 		//whether ul tags are displayed or not
 		assertEquals(7, ulElements.size());
-		assertTrue(ulElements.get(0).isDisplayed());
+		assertFalse(ulElements.get(0).isDisplayed());
 		assertFalse(ulElements.get(1).isDisplayed());		
 		assertFalse(ulElements.get(2).isDisplayed());
 		assertFalse(ulElements.get(3).isDisplayed());
+		
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", ulElements.get(4));
+		wait.until(ExpectedConditions.visibilityOf(ulElements.get(4)));
 		assertTrue(ulElements.get(4).isDisplayed());
-		assertTrue(ulElements.get(5).isDisplayed());
-
 		highLightElementClass.highlightElement(driver, content.get(0));
 		highLightElementClass.highlightElement(driver, ulElements.get(4));
 		highLightElementClass.highlightElement(driver, content.get(1));
+		assertTrue(ulElements.get(5).isDisplayed());
 		highLightElementClass.highlightElement(driver, ulElements.get(5));
 		highLightElementClass.highlightElement(driver, content.get(2));
 

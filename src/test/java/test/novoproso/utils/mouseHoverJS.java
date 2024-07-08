@@ -1,4 +1,4 @@
-package test.novoproso;
+package test.novoproso.utils;
 
 import java.util.NoSuchElementException;
 
