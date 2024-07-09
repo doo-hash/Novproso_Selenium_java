@@ -34,14 +34,12 @@ import test.novoproso.utils.mouseHoverJS;
 class ServicesSectionLinksTest {
 
 	//chrome, msedge, firefox
-	static String browser = "msedge";
-//	static RemoteWebDriver driver; 
-//	static DesiredCapabilities capabilities = new DesiredCapabilities();
+	static String browser = "chrome";
+	static RemoteWebDriver driver; 
 
-	static WebDriver driver;
+//	static WebDriver driver;
 	static JavascriptExecutor jsExecutor;
 	static WebDriverWait wait, elementWait;
-//	static RemoteWebDriver driver;//it includes JavascriptExecutor, TakesScreenshot functionality
 	static Actions actions;
 	static mouseHoverJS hoverJS;
 	static highLightElement highLightElementClass;
@@ -49,12 +47,9 @@ class ServicesSectionLinksTest {
 	
 	@BeforeAll
 	static void setUp() throws Exception {
-		driver = browserSetUp.getBrowserSetUp(browser);
+//		driver = browserSetUp.getBrowserSetUp(browser);
 		
-//		capabilities.setBrowserName("chrome");
-//		capabilities.setPlatform(Platform.WIN11);
-//		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
-//		driver.manage().window().maximize();
+		driver = browserSetUp.getBrowserGridSetUp(browser);
 		
 		jsExecutor = (JavascriptExecutor) driver;//casting webdriver to JavascriptExecutor
 		actions = new Actions(driver);

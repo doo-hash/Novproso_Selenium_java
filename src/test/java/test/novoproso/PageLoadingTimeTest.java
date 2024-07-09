@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
@@ -15,23 +16,29 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import test.novoproso.utils.BrowserSetUp;
 
 class PageLoadingTimeTest {
 	
 	//chrome, msedge, firefox
-	String browser = "msedge";
+	String browser = "chrome";
 	BrowserSetUp browserSetUp = new BrowserSetUp();
-	WebDriver driver;
+//	WebDriver driver;
 	JavascriptExecutor jsexecutor;
-	
+	RemoteWebDriver driver;
+
 	@Test
 	void pageLoadTest() throws InterruptedException, IOException {
-		driver = browserSetUp.getBrowserSetUp(browser);
+		driver = browserSetUp.getBrowserGridSetUp(browser);
+		
+//		driver = browserSetUp.getBrowserSetUp(browser);
 
 		//Throws TimeoutException
 //		driver.manage().timeouts().pageLoadTimeout(3, TimeUnit.SECONDS);
@@ -53,10 +60,10 @@ class PageLoadingTimeTest {
 		driver.quit();
 	}
 	
-//	@Disabled
+	@Disabled
 	@Test
 	void ScreenShotTest() throws InterruptedException, IOException {
-		driver = browserSetUp.getBrowserSetUp(browser);
+//		driver = browserSetUp.getBrowserSetUp(browser);
 		driver.manage().window().maximize();
 		jsexecutor = (JavascriptExecutor) driver;
 		driver.get("https://novoproso.com/csr.html");

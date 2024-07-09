@@ -34,11 +34,10 @@ import test.novoproso.utils.mouseHoverJS;
 class aboutUsSection {
 
 	//chrome, msedge, firefox
-	static String browser ="msedge";
-//	static RemoteWebDriver driver; 
-//	static DesiredCapabilities capabilities = new DesiredCapabilities();
+	static String browser ="chrome";
+	static RemoteWebDriver driver; 
 
-	static WebDriver driver;
+//	static WebDriver driver;
 	static JavascriptExecutor jsExecutor;
 	static WebDriverWait wait, elementWait;
 	static Actions action;
@@ -49,12 +48,9 @@ class aboutUsSection {
 	
 	@BeforeAll
  	static void setUp() throws Exception {
-		driver = browserSetUpConfig.getBrowserSetUp(browser);
+//		driver = browserSetUpConfig.getBrowserSetUp(browser);
 
-		//		capabilities.setBrowserName("chrome");
-//		capabilities.setPlatform(Platform.WIN11);
-//		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
-//		driver.manage().window().maximize();
+		driver = browserSetUpConfig.getBrowserGridSetUp(browser);
 						
 		//actions
 		action = new Actions(driver);

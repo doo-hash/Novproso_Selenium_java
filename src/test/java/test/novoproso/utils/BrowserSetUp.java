@@ -1,5 +1,9 @@
 package test.novoproso.utils;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -7,6 +11,8 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class BrowserSetUp {
 
@@ -39,4 +45,29 @@ public class BrowserSetUp {
 		return driver;
 	}
 
+	public RemoteWebDriver getBrowserGridSetUp(String browserName) throws MalformedURLException {
+		RemoteWebDriver driver = null;
+		DesiredCapabilities capabilities = new DesiredCapabilities();
+
+		switch (browserName) {
+		case "chrome":
+			capabilities.setBrowserName("chrome");
+			capabilities.setPlatform(Platform.WIN11);
+			driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
+			driver.manage().window().maximize();
+			break;
+		case "msedge":
+			capabilities.setBrowserName("MicrosoftEdge");
+			capabilities.setPlatform(Platform.WIN11);
+			driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
+			driver.manage().window().maximize();
+			break;
+		case "firefox":
+			break;
+		default:
+			break;
+		}
+		
+		return driver;
+	}
 }

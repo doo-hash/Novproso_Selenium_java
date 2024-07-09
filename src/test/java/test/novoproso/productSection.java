@@ -11,17 +11,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -34,11 +26,10 @@ import test.novoproso.utils.mouseHoverJS;
 class productSection {
 	
 	//chrome, msedge, firefox
-	static String browser = "msedge";
-//	static RemoteWebDriver driver; 
-//	static DesiredCapabilities capabilities = new DesiredCapabilities();
+	static String browser = "chrome";
+	static RemoteWebDriver driver; 
 	
-	static WebDriver driver;
+//	static WebDriver driver;
 	static JavascriptExecutor jsExecutor;
 	static WebDriverWait wait, elementWait;
 	static Actions action;
@@ -49,12 +40,10 @@ class productSection {
 	
 	@BeforeAll
 	static void setUp() throws Exception {
-		driver = browserSetUp.getBrowserSetUp(browser);
+//		driver = browserSetUp.getBrowserSetUp(browser);
 		
-//		capabilities.setBrowserName("chrome");
-//		capabilities.setPlatform(Platform.WIN11);
-//		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
-//		driver.manage().window().maximize();
+		driver = browserSetUp.getBrowserGridSetUp(browser);
+
 				
 		//actions
 		action = new Actions(driver);

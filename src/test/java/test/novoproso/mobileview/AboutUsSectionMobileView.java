@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 
@@ -13,9 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -28,11 +33,10 @@ import test.novoproso.utils.mouseHoverJS;
 class AboutUsSectionMobileView {
 
 	//chrome, msedge, firefox
-	static String browser ="msedge";
-//	static RemoteWebDriver driver; 
-//	static DesiredCapabilities capabilities = new DesiredCapabilities();
+	static String browser ="chrome";
+	static RemoteWebDriver driver; 
 
-	static WebDriver driver;
+//	static WebDriver driver;
 	static JavascriptExecutor jsExecutor;
 	static WebDriverWait wait, elementWait;
 	static Actions action;
@@ -42,14 +46,13 @@ class AboutUsSectionMobileView {
 	static BrowserSetUp browserSetUpConfig = new BrowserSetUp();
 	
 	@BeforeAll
-	static void beforesetUp() {
-		driver = browserSetUpConfig.getBrowserSetUp(browser);
+	static void beforesetUp() throws MalformedURLException {
+		driver = browserSetUpConfig.getBrowserGridSetUp(browser);
+
+		
+//		driver = browserSetUpConfig.getBrowserSetUp(browser);
 		driver.manage().window().setSize(new Dimension(673,690));
 
-//		capabilities.setBrowserName("chrome");
-//		capabilities.setPlatform(Platform.WIN11);
-//		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), capabilities);
-//		driver.manage().window().maximize();
 						
 		//actions
 		action = new Actions(driver);
