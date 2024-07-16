@@ -1,4 +1,4 @@
-package test.novoproso.utils;
+package test.novoproso.utilities;
 
 import java.util.NoSuchElementException;
 
@@ -7,9 +7,9 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class mouseHoverJS {
+public class MouseHoverScript {
 
-	public mouseHoverJS() {
+	public MouseHoverScript() {
 	}
 	
 	public void mouseHoverJScript(WebElement HoverElement, WebDriver driver) {

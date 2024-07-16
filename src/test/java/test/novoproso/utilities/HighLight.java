@@ -1,12 +1,12 @@
-package test.novoproso.utils;
+package test.novoproso.utilities;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class highLightElement {
+public class HighLight {
 
-	public highLightElement() {
+	public HighLight() {
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -15,4 +15,8 @@ public class highLightElement {
 		javascriptExecutor.executeScript("arguments[0].setAttribute('style', 'border: 2px solid red;')", element);
 	}
 
+	public void removeHighlightElement(WebDriver driver, WebElement element) {
+		JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
+		javascriptExecutor.executeScript("arguments[0].setAttribute('style', 'border: none;')", element);
+	}
 }

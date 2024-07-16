@@ -1,4 +1,4 @@
-package test.novoproso.utils;
+package test.novoproso.utilities;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,8 +24,8 @@ class sampleTests {
 	static WebDriverWait wait, elementWait;
 	static Actions action;
 	static ChromeOptions chromeoptions;
-	static mouseHoverJS hoverJS;
-	static highLightElement highLightElementClass;
+	static MouseHoverScript hoverJS;
+	static HighLight highLightElementClass;
 	
 	private void elementWait(WebElement element) {
 		synchronized (element) {

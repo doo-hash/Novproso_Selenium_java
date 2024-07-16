@@ -11,6 +11,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
@@ -30,25 +32,27 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import test.novoproso.utils.BrowserSetUp;
-import test.novoproso.utils.highLightElement;
-import test.novoproso.utils.mouseHoverJS;
+import test.novoproso.utilities.BrowserSetUp;
+import test.novoproso.utilities.HighLight;
+import test.novoproso.utilities.MouseHoverScript;
 
 import org.openqa.selenium.ElementClickInterceptedException;
 
-class homePage {
+
+@TestInstance(Lifecycle.PER_CLASS)
+class HomePage {
 	
 	//chrome, msedge, firefox
-	static String browser = "chrome";
-	static RemoteWebDriver driver;
-//	static WebDriver driver;
-	static JavascriptExecutor jsExecutor;
-	static WebDriverWait wait, elementWait;
-//	static RemoteWebDriver driver;//it includes JavascriptExecutor, TakesScreenshot functionality
-	static Actions actions;
-	static mouseHoverJS hoverJS;
-	static highLightElement highLightElementClass;
-	static BrowserSetUp browserSetUp = new BrowserSetUp();
+	String browser = "msedge";
+	RemoteWebDriver driver;
+//	WebDriver driver;
+	JavascriptExecutor jsExecutor;
+	WebDriverWait wait, elementWait;
+//	RemoteWebDriver driver;//it includes JavascriptExecutor, TakesScreenshot functionality
+	Actions actions;
+	MouseHoverScript hoverJS;
+	HighLight highLightElementClass;
+	BrowserSetUp browserSetUp = new BrowserSetUp();
 	
 	private void elementWait(WebElement element) {
 		synchronized (element) {
@@ -62,19 +66,19 @@ class homePage {
 
 	
 	@BeforeAll
-	static void setUp() throws Exception {
+	void setUp() throws Exception {
 //		driver = browserSetUp.getBrowserSetUp(browser);
 		driver = browserSetUp.getBrowserGridSetUp(browser);
 
 		jsExecutor = (JavascriptExecutor) driver;//casting webdriver to JavascriptExecutor
 		actions = new Actions(driver);
 		
-		hoverJS = new mouseHoverJS();
-		highLightElementClass = new highLightElement();
+		hoverJS = new MouseHoverScript();
+		highLightElementClass = new HighLight();
 	}
 
 	@AfterAll
-	static void tearDown() throws Exception {
+	void tearDown() throws Exception {
 		driver.quit();
 	}
 
@@ -479,7 +483,7 @@ class homePage {
 		//From services section
 		WebElement servicesHeading = driver.findElement(By.xpath("//div[contains(@class,'services-heading')]/h2"));
 		//wait until products section is visible
-		elementWait.until(d -> servicesHeading.isDisplayed());
+		wait.until(d -> servicesHeading.isDisplayed());
 		
 		//assert main heading
 		highLightElementClass.highlightElement(driver, servicesHeading);

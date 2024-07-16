@@ -23,12 +23,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import test.novoproso.utils.BrowserSetUp;
+import test.novoproso.utilities.BrowserSetUp;
 
 class PageLoadingTimeTest {
 	
 	//chrome, msedge, firefox
-	String browser = "chrome";
+	String browser = "msedge";
 	BrowserSetUp browserSetUp = new BrowserSetUp();
 //	WebDriver driver;
 	JavascriptExecutor jsexecutor;

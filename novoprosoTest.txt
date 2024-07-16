@@ -68,3 +68,9 @@ Contact Us:
 - tested map 
 
 map URL: https://www.google.com/maps?ll=38.774302,-93.71891&z=16&t=m&hl=en&gl=US&mapclient=embed&cid=5132590464493258661
+
+
+********************
+if beforeAll or afterAll is not given with static, it throws JUnitException
+org.junit.platform.commons.JUnitException: @BeforeAll method 'void test.novoproso.ServicesSection.setUp() throws java.lang.Exception' must be static unless the test class is annotated with @TestInstance(Lifecycle.PER_CLASS).
+

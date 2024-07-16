@@ -1,4 +1,4 @@
-package test.novoproso.utils;
+package test.novoproso.utilities;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -6,11 +6,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class footerHighlight {
+public class FooterHighlight {
 
-	highLightElement highLight = new highLightElement();
+	HighLight highLight = new HighLight();
 	
-	public footerHighlight() {
+	public FooterHighlight() {
 		// TODO Auto-generated constructor stub
 	}
 

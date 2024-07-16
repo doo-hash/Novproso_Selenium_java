@@ -9,6 +9,8 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -18,28 +20,29 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import test.novoproso.utils.BrowserSetUp;
-import test.novoproso.utils.footerHighlight;
-import test.novoproso.utils.highLightElement;
-import test.novoproso.utils.mouseHoverJS;
+import test.novoproso.utilities.BrowserSetUp;
+import test.novoproso.utilities.FooterHighlight;
+import test.novoproso.utilities.HighLight;
+import test.novoproso.utilities.MouseHoverScript;
 
-class productSection {
+@TestInstance(Lifecycle.PER_CLASS)
+class ProductSection {
 	
 	//chrome, msedge, firefox
-	static String browser = "chrome";
-	static RemoteWebDriver driver; 
+	String browser = "msedge";
+	RemoteWebDriver driver; 
 	
-//	static WebDriver driver;
-	static JavascriptExecutor jsExecutor;
-	static WebDriverWait wait, elementWait;
-	static Actions action;
-	static mouseHoverJS hoverJS;
-	static footerHighlight footerHighlightClass;
-	static highLightElement highLightElementClass;
-	static BrowserSetUp browserSetUp = new BrowserSetUp();
+//	WebDriver driver;
+	JavascriptExecutor jsExecutor;
+	WebDriverWait wait, elementWait;
+	Actions action;
+	MouseHoverScript hoverJS;
+	FooterHighlight footerHighlightClass;
+	HighLight highLightElementClass;
+	BrowserSetUp browserSetUp = new BrowserSetUp();
 	
 	@BeforeAll
-	static void setUp() throws Exception {
+	void setUp() throws Exception {
 //		driver = browserSetUp.getBrowserSetUp(browser);
 		
 		driver = browserSetUp.getBrowserGridSetUp(browser);
@@ -51,13 +54,13 @@ class productSection {
 		//JavaScriptExecutor
 		jsExecutor = (JavascriptExecutor) driver;
 		
-		hoverJS = new mouseHoverJS();
-		highLightElementClass = new highLightElement();
-		footerHighlightClass = new footerHighlight();
+		hoverJS = new MouseHoverScript();
+		highLightElementClass = new HighLight();
+		footerHighlightClass = new FooterHighlight();
 	}
 
 	@AfterAll
-	static void tearDown() throws Exception {
+	void tearDown() throws Exception {
 		driver.quit();
 	}
 
