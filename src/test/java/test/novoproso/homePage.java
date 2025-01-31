@@ -273,12 +273,10 @@ class HomePage {
 	}
 
 
-//	@Disabled
 
 
 
 	
-//	@Disabled
 	
 	@Test
 	void aboutUsSectionTest() throws InterruptedException {	
